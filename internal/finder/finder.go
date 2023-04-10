@@ -7,7 +7,8 @@ import (
 	"strings"
 )
 
-func Find(r io.Reader) model.Model {
+func Find(r io.Reader, direction string) model.Model {
+	prefix := "//go:" + direction
 	packageName := ""
 	structNames := []string(nil)
 	reader := bufio.NewReader(r)
@@ -20,15 +21,18 @@ func Find(r io.Reader) model.Model {
 		switch {
 		case packageName == "" && strings.HasPrefix(value, "package "):
 			packageName = strings.TrimPrefix(value, "package ")
-		case strings.HasPrefix(value, "//go:bean"):
-			line, _, err = reader.ReadLine()
-			if err != nil {
-				break
-			}
-			value = string(line)
-			if strings.HasPrefix(value, "type ") {
-				sp := strings.SplitN(value, " ", 3)
-				structNames = append(structNames, sp[1])
+		case strings.HasPrefix(value, prefix):
+			for {
+				line, _, err = reader.ReadLine()
+				if err != nil {
+					break
+				}
+				value = string(line)
+				if strings.HasPrefix(value, "type ") {
+					sp := strings.SplitN(value, " ", 3)
+					structNames = append(structNames, sp[1])
+					break
+				}
 			}
 		}
 	}
