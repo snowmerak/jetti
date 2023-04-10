@@ -1,6 +1,6 @@
 package model
 
-type Model struct {
+type Structs struct {
 	PackageName string
 	StructNames []string
 }

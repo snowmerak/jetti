@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func Generate(models ...model.Model) ([]byte, error) {
+func Generate(models ...model.Structs) ([]byte, error) {
 	buffer := bytes.NewBuffer(nil)
 	buffer.Write([]byte("package bean\n\n"))
 	buffer.Write([]byte("type Bean struct {\n"))

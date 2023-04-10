@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func Find(r io.Reader, direction string) model.Model {
+func FindStruct(r io.Reader, direction string) model.Structs {
 	prefix := "//go:" + direction
 	packageName := ""
 	structNames := []string(nil)
@@ -36,7 +36,7 @@ func Find(r io.Reader, direction string) model.Model {
 			}
 		}
 	}
-	return model.Model{
+	return model.Structs{
 		PackageName: packageName,
 		StructNames: structNames,
 	}

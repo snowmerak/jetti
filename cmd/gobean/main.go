@@ -13,7 +13,7 @@ import (
 const direction = "bean"
 
 func main() {
-	models := []model.Model(nil)
+	models := []model.Structs(nil)
 
 	if err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
@@ -28,7 +28,7 @@ func main() {
 			return err
 		}
 
-		models = append(models, finder.Find(f, direction))
+		models = append(models, finder.FindStruct(f, direction))
 
 		return nil
 	}); err != nil {
