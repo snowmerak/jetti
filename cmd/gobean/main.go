@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 )
 
+const direction = "bean"
+
 func main() {
 	models := []model.Model(nil)
 
@@ -26,7 +28,7 @@ func main() {
 			return err
 		}
 
-		models = append(models, finder.Find(f))
+		models = append(models, finder.Find(f, direction))
 
 		return nil
 	}); err != nil {
