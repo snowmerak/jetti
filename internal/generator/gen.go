@@ -31,7 +31,7 @@ func Generate(models ...model.Model) ([]byte, error) {
 
 	for _, m := range models {
 		for _, structName := range m.StructNames {
-			buffer.Write([]byte("func (b *Builder) " + structName + "(" + strings.ToLower(structName) + " *" + m.PackageName + "." + structName + ") *Builder {\n"))
+			buffer.Write([]byte("func (b *Builder) Add" + structName + "(" + strings.ToLower(structName) + " *" + m.PackageName + "." + structName + ") *Builder {\n"))
 			buffer.Write([]byte("\tb.bean." + strings.ToLower(structName) + " = " + strings.ToLower(structName) + "\n"))
 			buffer.Write([]byte("\treturn b\n"))
 			buffer.Write([]byte("}\n\n"))
