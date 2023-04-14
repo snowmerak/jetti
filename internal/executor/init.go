@@ -27,6 +27,10 @@ func Init(projectName string) {
 		panic(err)
 	}
 
+	if err := os.MkdirAll("uml", os.ModePerm); err != nil {
+		panic(err)
+	}
+
 	if _, err := os.Stat("go.mod"); os.IsNotExist(err) {
 		output, err := exec.Command("go", "mod", "init", projectName).Output()
 		if err != nil {
