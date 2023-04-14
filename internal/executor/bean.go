@@ -1,18 +1,18 @@
-package main
+package executor
 
 import (
 	"fmt"
-	"github.com/snowmerak/go-bean/internal/finder"
-	"github.com/snowmerak/go-bean/internal/generator"
-	"github.com/snowmerak/go-bean/internal/model"
+	"github.com/snowmerak/jetti/internal/finder"
+	"github.com/snowmerak/jetti/internal/generator"
+	"github.com/snowmerak/jetti/internal/model"
 	"go/format"
 	"os"
 	"path/filepath"
 )
 
-const direction = "bean"
+func Bean() {
+	const direction = "bean"
 
-func main() {
 	models := []model.Structs(nil)
 
 	if err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
@@ -28,7 +28,7 @@ func main() {
 			return err
 		}
 
-		models = append(models, finder.FindStruct(f, direction))
+		models = append(models, finder.FindStructName(f, direction))
 
 		return nil
 	}); err != nil {
@@ -51,7 +51,7 @@ func main() {
 		panic(err)
 	}
 
-	f, err := os.Create("bean/bean.go")
+	f, err := os.Create("src/bean/bean.go")
 	if err != nil {
 		panic(err)
 	}

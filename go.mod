@@ -1,3 +1,3 @@
-module github.com/snowmerak/go-bean
+module github.com/snowmerak/jetti
 
 go 1.20
