@@ -39,7 +39,14 @@ func Init(projectName string) {
 		log.Println(string(output))
 	}
 
-	switch output, err := exec.Command("go", "get", "gopkg.in/yaml.v3").Output(); err.(type) {
+	switch output, err := exec.Command("go", "get", "github.com/goccy/go-json").Output(); err.(type) {
+	case nil:
+		log.Println(string(output))
+	default:
+		panic(err)
+	}
+
+	switch output, err := exec.Command("go", "get", "github.com/goccy/go-yaml").Output(); err.(type) {
 	case nil:
 		log.Println(string(output))
 	default:
