@@ -36,7 +36,7 @@ Run `gobean` in the root directory of your project.
 jetti bean --generate
 ```
 
-Then the code below will be generated.
+Then the code below will be generated in `generated/bean/bean.go`.
 
 ```go
 package bean
@@ -162,3 +162,23 @@ jetti cmd --run=<name>,<arg1>,<arg2>,...
 ```
 
 Then, jetti is going to run executable package from cmd files in `cmd` directory.
+
+### pprof
+
+`pprof` is a simple command to make pprof server.
+
+#### http1
+
+```bash
+jetti pprof --http1 <addr>
+```
+
+Then, jetti is going to make pprof server with http1 in `generated/pprof/http1`.
+
+#### http2
+
+```bash
+jetti pprof --http2 <addr>
+```
+
+Then, jetti is going to make pprof server with http2 in `generated/pprof/http2`.
