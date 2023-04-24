@@ -170,7 +170,7 @@ Then, jetti is going to run executable package from cmd files in `cmd` directory
 #### http1
 
 ```bash
-jetti pprof --http1 <addr>
+jetti pprof --http-1 <addr>
 ```
 
 Then, jetti is going to make pprof server with http1 in `generated/pprof/http1`.
@@ -178,7 +178,7 @@ Then, jetti is going to make pprof server with http1 in `generated/pprof/http1`.
 #### http2
 
 ```bash
-jetti pprof --http2 <addr>
+jetti pprof --http-2 <addr>
 ```
 
 Then, jetti is going to make pprof server with http2 in `generated/pprof/http2`.
