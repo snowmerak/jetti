@@ -4,6 +4,7 @@ const (
 	Proto = "proto"
 	Bean  = "bean"
 	Cmd   = "cmd"
+	New   = "new"
 )
 
 type CLI struct {
@@ -19,4 +20,7 @@ type CLI struct {
 		Build []string `help:"Build a cmd package: <cmd-name>,[<options>...]"`
 		Run   []string `help:"Run a cmd package: <cmd-name>,[<args>...]"`
 	} `cmd:"" help:"managing cmd package"`
+	New struct {
+		Init string `help:"Initialize a new project"`
+	} `cmd:"" help:"Initialize a new project"`
 }

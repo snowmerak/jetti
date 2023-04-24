@@ -11,6 +11,11 @@ func main() {
 	ctx := kong.Parse(param)
 
 	switch ctx.Command() {
+	case cli.New:
+		switch {
+		case param.New.Init != "":
+			executor.Init(param.New.Init)
+		}
 	case cli.Proto:
 		switch {
 		case param.Proto.New != "":
