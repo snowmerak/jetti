@@ -1,41 +1,41 @@
 package main
 
 import (
-	"flag"
+	"github.com/alecthomas/kong"
 	"github.com/snowmerak/jetti/internal/executor"
+	"github.com/snowmerak/jetti/internal/executor/cli"
 	"strings"
 )
 
 func main() {
-	initFlag := flag.String("init", "", "-init <project-name> : initialize go project")
-	beanFlag := flag.Bool("bean", false, "-bean : generate bean container")
-	protoFlag := flag.Bool("proto", false, "-proto : generate protobuf messages and grpc services")
-	protoMakeFlag := flag.String("proto-make", "", "-proto-make <path>/<filename.proto>")
-	cmdFlag := flag.String("cmd", "", "-cmd \"<cmd-name> <args>...\" : run cmd")
-	cmdMakeFlag := flag.String("cmd-make", "", "-cmd-make <cmd-name> : make cmd")
-	helpFlag := flag.Bool("help", false, "show help")
-	flag.Parse()
+	param := &cli.CLI{}
+	ctx := kong.Parse(param)
 
-	if *helpFlag {
-		flag.PrintDefaults()
+	if err := ctx.PrintUsage(true); err != nil {
+		return
 	}
-	if *initFlag != "" {
-		executor.Init(*initFlag)
-	}
-	if *beanFlag {
-		executor.Bean()
-	}
-	if *protoFlag {
-		executor.Proto()
-	}
-	if *protoMakeFlag != "" {
-		executor.ProtoMake(*protoMakeFlag)
-	}
-	if *cmdFlag != "" {
-		split := strings.Split(*cmdFlag, " ")
-		executor.Cmd(split[0], split[1:]...)
-	}
-	if *cmdMakeFlag != "" {
-		executor.CmdMake(*cmdMakeFlag)
+
+	switch ctx.Command() {
+	case cli.Proto:
+		switch {
+		case param.Proto.New != "":
+			executor.ProtoMake(param.Proto.New)
+		case param.Proto.Build:
+			executor.Proto()
+		}
+	case cli.Bean:
+		if param.Bean.Generate {
+			executor.Bean()
+		}
+	case cli.Cmd:
+		switch {
+		case param.Cmd.New != "":
+			executor.CmdMake(param.Cmd.New)
+		case param.Cmd.Build != "":
+			executor.CmdBuild(param.Cmd.Build)
+		case param.Cmd.Run != "":
+			args := strings.Split(param.Cmd.Run, " ")
+			executor.Cmd(args[0], args[1:]...)
+		}
 	}
 }
