@@ -1,7 +1,6 @@
 package executor
 
 import (
-	"fmt"
 	"github.com/snowmerak/jetti/internal/finder"
 	"github.com/snowmerak/jetti/internal/generator"
 	"github.com/snowmerak/jetti/internal/model"
@@ -35,8 +34,6 @@ func Bean() {
 		panic(err)
 	}
 
-	fmt.Printf("%+v\n", models)
-
 	bs, err := generator.Generate(models...)
 	if err != nil {
 		panic(err)
@@ -47,11 +44,12 @@ func Bean() {
 		panic(err)
 	}
 
-	if err := os.MkdirAll("bean", os.ModePerm); err != nil {
+	beanFolder := filepath.Join("generated", "bin")
+	if err := os.MkdirAll(beanFolder, os.ModePerm); err != nil {
 		panic(err)
 	}
 
-	f, err := os.Create("src/bean/bean.go")
+	f, err := os.Create(filepath.Join(beanFolder, "bean.go"))
 	if err != nil {
 		panic(err)
 	}
