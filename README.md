@@ -30,8 +30,10 @@ type Person struct {
 
 Run `gobean` in the root directory of your project.
 
+#### generate
+
 ```bash
-jetti -bean
+jetti bean --generate
 ```
 
 Then the code below will be generated.
@@ -69,14 +71,16 @@ We do not import dependency package automatically, so you need to import it manu
 
 Just save it.
 
-### init
+### new
+
+#### init
 
 `init` is a simple command to initialize a project.
 
-#### Usage
+##### Usage
 
 ```bash
-jetti -init <project-name>
+jetti new --init <project-name>
 ```
 
 Then, a project with the following structure will be created.
@@ -107,24 +111,54 @@ go get google.golang.org/grpc
 
 `proto` is a simple command to generate protobuf and gRPC code from proto files.
 
-#### Usage
+#### new
+
+`new` is a simple command to initialize a proto project.
 
 ```bash
-jetti -proto
+jetti proto --new <path>
+```
+
+Then, a proto file will be created in the specified path.
+
+If, for example, you run `jetti proto --new person/person.proto`, the file will be created in `proto/person/person.proto`.
+
+#### build
+
+```bash
+jetti proto --build
 ```
 
 Then, jetti is going to generate protobuf and gRPC code from proto files in `proto` directory.
 
-### proto-make
+### cmd
 
-`proto-make` is a simple command to generate protobuf and gRPC code from proto files.
+`cmd` is a simple command to manage executable package.
 
-#### Usage
+#### new
+
+`new` is a simple command to initialize a cmd project.
 
 ```bash
-jetti -proto-make <path-to-proto-file>
+jetti cmd --new <name>
 ```
 
-Then, jetti is going to generate protobuf and gRPC code from proto files in `proto` directory.
+Then, a cmd file will be created in `cmd/<name>/main.go`.
 
-For example, `jetti -proto-make person/person.proto` will generate protobuf and gRPC code to `proto/person/person.proto`.
+#### build
+
+```bash
+jetti cmd --build=<name>,<option1>,<option2>,...
+```
+
+Then, jetti is going to build executable package from cmd files in `cmd` directory.
+
+The executable file will be created in `bin` directory.
+
+#### run
+
+```bash
+jetti cmd --run=<name>,<arg1>,<arg2>,...
+```
+
+Then, jetti is going to run executable package from cmd files in `cmd` directory.
