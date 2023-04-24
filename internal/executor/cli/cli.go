@@ -5,6 +5,7 @@ const (
 	Bean  = "bean"
 	Cmd   = "cmd"
 	New   = "new"
+	Pprof = "pprof"
 )
 
 type CLI struct {
@@ -23,4 +24,8 @@ type CLI struct {
 	New struct {
 		Init string `help:"Initialize a new project"`
 	} `cmd:"" help:"Initialize a new project"`
+	Pprof struct {
+		Http1 string `help:"generate http1 pprof server: <addr>"`
+		Http2 string `help:"generate http2 pprof server: <addr>"`
+	} `cmd:"" help:"generate pprof server"`
 }

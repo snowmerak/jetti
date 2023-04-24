@@ -36,5 +36,12 @@ func main() {
 		case param.Cmd.Run != nil:
 			executor.CmdRun(param.Cmd.Run[0], param.Cmd.Run[1:]...)
 		}
+	case cli.Pprof:
+		if param.Pprof.Http1 != "" {
+			executor.PprofHttp1(param.Pprof.Http1)
+		}
+		if param.Pprof.Http2 != "" {
+			executor.PprofHttp2(param.Pprof.Http2)
+		}
 	}
 }
