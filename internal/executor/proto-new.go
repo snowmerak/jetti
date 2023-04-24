@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-func ProtoMake(path string) {
+func ProtoNew(path string) {
 	packageName := "." + filepath.Dir(path)
 	path = filepath.Join("proto", path)
 	dir := filepath.Dir(path)

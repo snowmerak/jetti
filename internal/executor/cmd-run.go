@@ -5,7 +5,7 @@ import (
 	"os/exec"
 )
 
-func Cmd(file string, args ...string) {
+func CmdRun(file string, args ...string) {
 	execArgs := append([]string{"run", "cmd/" + file + "/main.go"}, args...)
 	cmd := exec.Command("go", execArgs...)
 	cmd.Stdout = os.Stdout

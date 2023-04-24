@@ -4,24 +4,19 @@ import (
 	"github.com/alecthomas/kong"
 	"github.com/snowmerak/jetti/internal/executor"
 	"github.com/snowmerak/jetti/internal/executor/cli"
-	"strings"
 )
 
 func main() {
 	param := &cli.CLI{}
 	ctx := kong.Parse(param)
 
-	if err := ctx.PrintUsage(true); err != nil {
-		return
-	}
-
 	switch ctx.Command() {
 	case cli.Proto:
 		switch {
 		case param.Proto.New != "":
-			executor.ProtoMake(param.Proto.New)
+			executor.ProtoNew(param.Proto.New)
 		case param.Proto.Build:
-			executor.Proto()
+			executor.ProtoBuild()
 		}
 	case cli.Bean:
 		if param.Bean.Generate {
@@ -30,12 +25,11 @@ func main() {
 	case cli.Cmd:
 		switch {
 		case param.Cmd.New != "":
-			executor.CmdMake(param.Cmd.New)
-		case param.Cmd.Build != "":
-			executor.CmdBuild(param.Cmd.Build)
-		case param.Cmd.Run != "":
-			args := strings.Split(param.Cmd.Run, " ")
-			executor.Cmd(args[0], args[1:]...)
+			executor.CmdNew(param.Cmd.New)
+		case param.Cmd.Build != nil:
+			executor.CmdBuild(param.Cmd.Build[0], param.Cmd.Build[1:]...)
+		case param.Cmd.Run != nil:
+			executor.CmdRun(param.Cmd.Run[0], param.Cmd.Run[1:]...)
 		}
 	}
 }

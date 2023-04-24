@@ -15,8 +15,8 @@ type CLI struct {
 		Generate bool `help:"Generate bean container"`
 	} `cmd:"" help:"Generate bean container"`
 	Cmd struct {
-		New   string `help:"Create a new cmd package: <cmd-name>"`
-		Build string `help:"Build a cmd package: <cmd-name>"`
-		Run   string `help:"Run a cmd package: <cmd-name>"`
+		New   string   `help:"Create a new cmd package: <cmd-name>"`
+		Build []string `help:"Build a cmd package: <cmd-name>,[<options>...]"`
+		Run   []string `help:"Run a cmd package: <cmd-name>,[<args>...]"`
 	} `cmd:"" help:"managing cmd package"`
 }

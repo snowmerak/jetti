@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-func Proto() {
+func ProtoBuild() {
 	if _, err := os.Stat("proto"); os.IsNotExist(err) {
 		panic(err)
 	}

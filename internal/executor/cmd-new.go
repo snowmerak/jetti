@@ -2,7 +2,7 @@ package executor
 
 import "os"
 
-func CmdMake(fileName string) {
+func CmdNew(fileName string) {
 	if err := os.MkdirAll("cmd/"+fileName, os.ModePerm); err != nil {
 		panic(err)
 	}

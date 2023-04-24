@@ -5,8 +5,10 @@ import (
 	"os/exec"
 )
 
-func CmdBuild(name string) {
-	cmd := exec.Command("go", "build", "-o", name, "./cmd/"+name+"/.")
+func CmdBuild(name string, args ...string) {
+	arr := append([]string{"build", "-o", name}, args...)
+	arr = append(arr, "./cmd/"+name+"/.")
+	cmd := exec.Command("go", arr...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
