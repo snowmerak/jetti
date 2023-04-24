@@ -44,7 +44,7 @@ func Bean() {
 		panic(err)
 	}
 
-	beanFolder := filepath.Join("generated", "bin")
+	beanFolder := filepath.Join(generated, "bean")
 	if err := os.MkdirAll(beanFolder, os.ModePerm); err != nil {
 		panic(err)
 	}
