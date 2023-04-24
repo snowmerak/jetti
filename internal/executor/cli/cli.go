@@ -27,5 +27,6 @@ type CLI struct {
 	Pprof struct {
 		Http1 string `help:"generate http1 pprof server: <addr>"`
 		Http2 string `help:"generate http2 pprof server: <addr>"`
+		Http3 string `help:"generate http3 pprof server: <addr>"`
 	} `cmd:"" help:"generate pprof server"`
 }

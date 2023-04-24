@@ -182,3 +182,11 @@ jetti pprof --http-2 <addr>
 ```
 
 Then, jetti is going to make pprof server with http2 in `generated/pprof/http2`.
+
+#### http3
+
+```bash
+jetti pprof --http-3 <addr>
+```
+
+Then, jetti is going to make pprof server with http3 in `generated/pprof/http3`.

@@ -43,5 +43,8 @@ func main() {
 		if param.Pprof.Http2 != "" {
 			executor.PprofHttp2(param.Pprof.Http2)
 		}
+		if param.Pprof.Http3 != "" {
+			executor.PprofHttp3(param.Pprof.Http3)
+		}
 	}
 }
