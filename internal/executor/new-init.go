@@ -7,7 +7,7 @@ import (
 )
 
 func Init(projectName string) {
-	if err := os.MkdirAll("src", os.ModePerm); err != nil {
+	if err := os.MkdirAll("pkg", os.ModePerm); err != nil {
 		panic(err)
 	}
 
@@ -23,10 +23,6 @@ func Init(projectName string) {
 		panic(err)
 	}
 
-	if err := os.MkdirAll("configs", os.ModePerm); err != nil {
-		panic(err)
-	}
-
 	if err := os.MkdirAll("uml", os.ModePerm); err != nil {
 		panic(err)
 	}
@@ -39,31 +35,23 @@ func Init(projectName string) {
 		log.Println(string(output))
 	}
 
-	switch output, err := exec.Command("go", "get", "github.com/goccy/go-json").Output(); err.(type) {
-	case nil:
-		log.Println(string(output))
-	default:
-		panic(err)
+	if _, err := os.Stat("README.md"); os.IsNotExist(err) {
+		if err := os.WriteFile("README.md", []byte("# "+projectName+"\n"), os.ModePerm); err != nil {
+			panic(err)
+		}
 	}
 
-	switch output, err := exec.Command("go", "get", "github.com/goccy/go-yaml").Output(); err.(type) {
-	case nil:
-		log.Println(string(output))
-	default:
-		panic(err)
-	}
-
-	switch output, err := exec.Command("go", "get", "google.golang.org/grpc").Output(); err.(type) {
-	case nil:
-		log.Println(string(output))
-	default:
-		panic(err)
-	}
-
-	switch output, err := exec.Command("go", "get", "google.golang.org/protobuf").Output(); err.(type) {
-	case nil:
-		log.Println(string(output))
-	default:
-		panic(err)
-	}
+	//switch output, err := exec.Command("go", "get", "github.com/goccy/go-json").Output(); err.(type) {
+	//case nil:
+	//	log.Println(string(output))
+	//default:
+	//	panic(err)
+	//}
+	//
+	//switch output, err := exec.Command("go", "get", "github.com/goccy/go-yaml").Output(); err.(type) {
+	//case nil:
+	//	log.Println(string(output))
+	//default:
+	//	panic(err)
+	//}
 }
