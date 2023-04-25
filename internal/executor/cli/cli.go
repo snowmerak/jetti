@@ -6,6 +6,7 @@ const (
 	Cmd   = "cmd"
 	New   = "new"
 	Pprof = "pprof"
+	Redis = "redis"
 )
 
 type CLI struct {
@@ -25,8 +26,12 @@ type CLI struct {
 		Init string `help:"Initialize a new project"`
 	} `cmd:"" help:"Initialize a new project"`
 	Pprof struct {
-		Http1 string `help:"generate http1 pprof server: <addr>"`
-		Http2 string `help:"generate http2 pprof server: <addr>"`
-		Http3 string `help:"generate http3 pprof server: <addr>"`
-	} `cmd:"" help:"generate pprof server"`
+		Http1 string `help:"Generate http1 pprof server: <addr>"`
+		Http2 string `help:"Generate http2 pprof server: <addr>"`
+		Http3 string `help:"Generate http3 pprof server: <addr>"`
+	} `cmd:"" help:"Generate pprof server"`
+	Redis struct {
+		New      string `help:"Create a new redis type: <path+name>"`
+		Generate bool   `help:"Generate redis data types"`
+	} `cmd:"" help:"Generate redis data type"`
 }
