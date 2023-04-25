@@ -89,22 +89,13 @@ Then, a project with the following structure will be created.
 .
 ├── README.md
 ├── cmd
-├── src
+├── pkg
 ├── internal
 ├── proto
 ├── configs
 ├── uml
 ├── go.mod
 ├── go.sum
-```
-
-And, add the dependencies to `go.mod`.
-
-```bash
-go get github.com/goccy/go-json
-go get github.com/goccy/go-yaml
-go get google.golang.org/protobuf
-go get google.golang.org/grpc
 ```
 
 ### proto
@@ -130,6 +121,8 @@ jetti proto --build
 ```
 
 Then, jetti is going to generate protobuf and gRPC code from proto files in `proto` directory.
+
+The generated code will be created in `generated/proto`.
 
 ### cmd
 
