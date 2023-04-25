@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -25,22 +26,28 @@ func ProtoBuild() {
 		panic(err)
 	}
 
-	if err := os.MkdirAll("src/model", os.ModePerm); err != nil {
+	if err := os.MkdirAll("generated/model", os.ModePerm); err != nil {
 		panic(err)
 	}
 
-	if err := os.MkdirAll("src/service", os.ModePerm); err != nil {
-		panic(err)
-	}
-
-	cmd := exec.Command("protoc", append([]string{"--proto_path=proto", "--go_out=src/model", "--go_opt=paths=source_relative", "--go-grpc_out=src/model", "--go-grpc_opt=paths=source_relative"}, protoFiles...)...)
+	cmd := exec.Command("protoc", append([]string{"--proto_path=proto", "--go_out=generated/model", "--go_opt=paths=source_relative", "--go-grpc_out=generated/model", "--go-grpc_opt=paths=source_relative"}, protoFiles...)...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		panic(err)
 	}
 
-	if err := os.MkdirAll("src/server", os.ModePerm); err != nil {
+	switch output, err := exec.Command("go", "get", "-u", "google.golang.org/grpc").Output(); err.(type) {
+	case nil:
+		log.Println(string(output))
+	default:
+		panic(err)
+	}
+
+	switch output, err := exec.Command("go", "get", "-u", "google.golang.org/protobuf").Output(); err.(type) {
+	case nil:
+		log.Println(string(output))
+	default:
 		panic(err)
 	}
 }
