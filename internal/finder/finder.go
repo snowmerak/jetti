@@ -122,3 +122,25 @@ func FindStructType(r io.Reader, direction string) model.Struct {
 		Fields:      fields,
 	}
 }
+
+func FindDirections(r io.Reader, direction string) []string {
+	prefix := "//go:" + direction
+	reader := bufio.NewReader(r)
+	result := []string(nil)
+	for {
+		line, _, err := reader.ReadLine()
+		if err != nil {
+			break
+		}
+		value := string(line)
+		if strings.HasPrefix(value, prefix) {
+			sp := strings.SplitN(value, " ", 2)
+			if len(sp) != 2 {
+				continue
+			}
+			result = append(result, sp[1])
+		}
+	}
+
+	return result
+}
