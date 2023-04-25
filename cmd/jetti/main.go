@@ -46,5 +46,12 @@ func main() {
 		if param.Pprof.Http3 != "" {
 			executor.PprofHttp3(param.Pprof.Http3)
 		}
+	case cli.Redis:
+		if param.Redis.New != "" {
+			executor.RedisNew(param.Redis.New)
+		}
+		if param.Redis.Generate {
+			executor.RedisGenerate()
+		}
 	}
 }
