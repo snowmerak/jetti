@@ -1,12 +1,13 @@
 package cli
 
 const (
-	Proto = "proto"
-	Bean  = "bean"
-	Cmd   = "cmd"
-	New   = "new"
-	Pprof = "pprof"
-	Redis = "redis"
+	Proto  = "proto"
+	Bean   = "bean"
+	Cmd    = "cmd"
+	New    = "new"
+	Pprof  = "pprof"
+	Redis  = "redis"
+	Client = "client"
 )
 
 type CLI struct {

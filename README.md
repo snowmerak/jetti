@@ -85,7 +85,7 @@ Then, a project with the following structure will be created.
 .
 ├── README.md
 ├── cmd
-├── pkg
+├── lib
 ├── internal
 ├── proto
 ├── configs

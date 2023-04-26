@@ -7,7 +7,7 @@ import (
 )
 
 func Init(projectName string) {
-	if err := os.MkdirAll("pkg", os.ModePerm); err != nil {
+	if err := os.MkdirAll("lib", os.ModePerm); err != nil {
 		panic(err)
 	}
 
