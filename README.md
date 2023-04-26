@@ -36,7 +36,7 @@ Run `gobean` in the root directory of your project.
 jetti bean --generate
 ```
 
-Then the code below will be generated in `generated/bean/bean.go`.
+Then the code below will be generated in `gen/bean/bean.go`.
 
 ```go
 package bean
@@ -66,10 +66,6 @@ func (b *Bean) Person() *person.Person {
 	return b.person
 }
 ```
-
-We do not import dependency package automatically, so you need to import it manually.
-
-Just save it.
 
 ### new
 
