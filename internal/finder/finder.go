@@ -169,3 +169,52 @@ func FindModuleName() (string, error) {
 		}
 	}
 }
+
+type Field struct {
+	Name string
+	Type string
+}
+
+func FindProtobufFields(file string, message string) []string {
+	f, err := os.Open(file)
+	if err != nil {
+		return nil
+	}
+	defer func() {
+		if err := f.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
+	reader := bufio.NewReader(f)
+	result := []string(nil)
+	for {
+		line, _, err := reader.ReadLine()
+		if err != nil {
+			break
+		}
+		value := string(line)
+		if strings.HasPrefix(value, "type "+message) {
+			for {
+				line, _, err = reader.ReadLine()
+				if err != nil {
+					break
+				}
+				value = string(line)
+				if strings.HasPrefix(value, "}") {
+					break
+				}
+				if strings.HasPrefix(value, "//") {
+					continue
+				}
+				sp := strings.SplitN(value, " ", 2)
+				if len(sp) != 2 {
+					continue
+				}
+				result = append(result, sp[0])
+			}
+		}
+	}
+
+	return result
+}

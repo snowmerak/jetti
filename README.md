@@ -239,3 +239,9 @@ If you want to use the `Person` protobuf in `gen/model/person`, you can use it l
 
 //go:redis set[<path>/<package>.<name>] <key>
 ```
+
+#### bitmap
+
+```go
+//go:redis bitmap <name> <key>
+```

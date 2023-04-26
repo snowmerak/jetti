@@ -161,6 +161,10 @@ func RedisGenerate() {
 				if err := generateRedisSet(buffer, split[1], split[2]); err != nil {
 					return err
 				}
+			case "bitmap":
+				if err := generateRedisBitMap(buffer, split[1], split[2]); err != nil {
+					return err
+				}
 			default:
 				switch {
 				case strings.HasPrefix(split[0], "string"):
@@ -724,6 +728,43 @@ func generateRedisSetProto(w *bytes.Buffer, name, key, typ string) error {
 	w.WriteString("\t\tresult = append(result, m)\n")
 	w.WriteString("\t}\n")
 	w.WriteString("\treturn se.Cursor, result, nil\n")
+	w.WriteString("}\n\n")
+
+	return nil
+}
+
+func generateRedisBitMap(w *bytes.Buffer, name, key string) error {
+	w.WriteString(fmt.Sprintf("type %s struct {\n", name))
+	w.WriteString("\tclient rueidis.Client\n")
+	w.WriteString("\tkey    string\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func New%s(client rueidis.Client) *%s {\n", name, name))
+	w.WriteString(fmt.Sprintf("\treturn &%s{client: client, key: \"%s\"}\n", name, key))
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) BitCount(ctx context.Context, start, end int64) (int64, error) {\n", name))
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Bitcount().Key(t.key).Start(start).End(end).Build()).AsInt64()\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) Set(ctx context.Context, offset int64, value bool) error {\n", name))
+	w.WriteString("v := int64(0)")
+	w.WriteString("\tif value {\n")
+	w.WriteString("\t\tv = 1\n")
+	w.WriteString("\t}\n")
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Setbit().Key(t.key).Offset(offset).Value(v).Build()).Error()\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) Get(ctx context.Context, offset int64) (bool, error) {\n", name))
+	w.WriteString("\tv, err := t.client.Do(ctx, t.client.B().Getbit().Key(t.key).Offset(offset).Build()).AsInt64()\n")
+	w.WriteString("\tif err != nil {\n")
+	w.WriteString("\t\treturn false, err\n")
+	w.WriteString("\t}\n")
+	w.WriteString("\treturn v == 1, nil\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) Count(ctx context.Context) (int64, error) {\n", name))
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Bitcount().Key(t.key).Build()).AsInt64()\n")
 	w.WriteString("}\n\n")
 
 	return nil
