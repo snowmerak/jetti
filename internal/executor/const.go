@@ -1,3 +1,3 @@
 package executor
 
-const generated = "generated"
+const generated = "gen"
