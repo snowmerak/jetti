@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"github.com/snowmerak/jetti/internal/model"
 	"io"
+	"os"
 	"strings"
 )
 
@@ -143,4 +144,28 @@ func FindDirections(r io.Reader, direction string) []string {
 	}
 
 	return result
+}
+
+func FindModuleName() (string, error) {
+	f, err := os.Open("go.mod")
+	if err != nil {
+		return "", err
+	}
+	defer func() {
+		if err := f.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
+	reader := bufio.NewReader(f)
+	for {
+		line, _, err := reader.ReadLine()
+		if err != nil {
+			return "", err
+		}
+
+		if strings.HasPrefix(string(line), "module ") {
+			return strings.TrimPrefix(string(line), "module "), nil
+		}
+	}
 }
