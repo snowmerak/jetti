@@ -157,6 +157,10 @@ func RedisGenerate() {
 				if err := generateRedisList(buffer, split[1], split[2]); err != nil {
 					return err
 				}
+			case "set":
+				if err := generateRedisSet(buffer, split[1], split[2]); err != nil {
+					return err
+				}
 			default:
 				switch {
 				case strings.HasPrefix(split[0], "string"):
@@ -167,6 +171,11 @@ func RedisGenerate() {
 				case strings.HasPrefix(split[0], "list"):
 					dep := dependencies[data]
 					if err := generateRedisListProto(buffer, split[1], split[2], dep.Type); err != nil {
+						return err
+					}
+				case strings.HasPrefix(split[0], "set"):
+					dep := dependencies[data]
+					if err := generateRedisSetProto(buffer, split[1], split[2], dep.Type); err != nil {
 						return err
 					}
 				}
@@ -541,6 +550,180 @@ func generateRedisListProto(w *bytes.Buffer, name, key, typ string) error {
 	w.WriteString("\t}\n")
 	w.WriteString("\tvalue := base64.StdEncoding.EncodeToString(data)\n")
 	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Lpos().Key(t.key).Element(value).Rank(rank).Build()).AsInt64()\n")
+	w.WriteString("}\n\n")
+
+	return nil
+}
+
+func generateRedisSet(w *bytes.Buffer, name, key string) error {
+	w.WriteString(fmt.Sprintf("type %s struct {\n", name))
+	w.WriteString("\tclient rueidis.Client\n")
+	w.WriteString("\tkey    string\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func New%s(client rueidis.Client) *%s {\n", name, name))
+	w.WriteString(fmt.Sprintf("\treturn &%s{client: client, key: \"%s\"}\n", name, key))
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SAdd(ctx context.Context, members ...string) error {\n", name))
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Sadd().Key(t.key).Member(members...).Build()).Error()\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SCard(ctx context.Context) (int64, error) {\n", name))
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Scard().Key(t.key).Build()).AsInt64()\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SIsMember(ctx context.Context, member string) (bool, error) {\n", name))
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Sismember().Key(t.key).Member(member).Build()).ToBool()\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SMembers(ctx context.Context) ([]string, error) {\n", name))
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Smembers().Key(t.key).Build()).AsStrSlice()\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SPop(ctx context.Context) (string, error) {\n", name))
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Spop().Key(t.key).Build()).ToString()\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SRandMember(ctx context.Context, count int64) ([]string, error) {\n", name))
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Srandmember().Key(t.key).Count(count).Build()).AsStrSlice()\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SRem(ctx context.Context, members ...string) error {\n", name))
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Srem().Key(t.key).Member(members...).Build()).Error()\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SScan(ctx context.Context, cursor uint64, match string, count int64) (uint64, []string, error) {\n", name))
+	w.WriteString("\tse, err := t.client.Do(ctx, t.client.B().Sscan().Key(t.key).Cursor(cursor).Match(match).Count(count).Build()).AsScanEntry()\n")
+	w.WriteString("\tif err != nil {\n")
+	w.WriteString("\t\treturn 0, nil, err\n")
+	w.WriteString("\t}\n")
+	w.WriteString("\treturn se.Cursor, se.Elements, nil\n")
+	w.WriteString("}\n\n")
+
+	return nil
+}
+
+func generateRedisSetProto(w *bytes.Buffer, name, key, typ string) error {
+	w.WriteString(fmt.Sprintf("type %s struct {\n", name))
+	w.WriteString("\tclient rueidis.Client\n")
+	w.WriteString("\tkey    string\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func New%s(client rueidis.Client) *%s {\n", name, name))
+	w.WriteString(fmt.Sprintf("\treturn &%s{client: client, key: \"%s\"}\n", name, key))
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SAdd(ctx context.Context, members ...*%s) error {\n", name, typ))
+	w.WriteString("\tvalues := make([]string, 0, len(members))\n")
+	w.WriteString("\tfor _, m := range members {\n")
+	w.WriteString("\t\tdata, err := proto.Marshal(m)\n")
+	w.WriteString("\t\tif err != nil {\n")
+	w.WriteString("\t\t\treturn err\n")
+	w.WriteString("\t\t}\n")
+	w.WriteString("\t\tvalues = append(values, base64.StdEncoding.EncodeToString(data))\n")
+	w.WriteString("\t}\n")
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Sadd().Key(t.key).Member(values...).Build()).Error()\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SCard(ctx context.Context) (int64, error) {\n", name))
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Scard().Key(t.key).Build()).AsInt64()\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SIsMember(ctx context.Context, member *%s) (bool, error) {\n", name, typ))
+	w.WriteString("\tdata, err := proto.Marshal(member)\n")
+	w.WriteString("\tif err != nil {\n")
+	w.WriteString("\t\treturn false, err\n")
+	w.WriteString("\t}\n")
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Sismember().Key(t.key).Member(base64.StdEncoding.EncodeToString(data)).Build()).ToBool()\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SMembers(ctx context.Context) ([]*%s, error) {\n", name, typ))
+	w.WriteString("\tvalues, err := t.client.Do(ctx, t.client.B().Smembers().Key(t.key).Build()).AsStrSlice()\n")
+	w.WriteString("\tif err != nil {\n")
+	w.WriteString("\t\treturn nil, err\n")
+	w.WriteString("\t}\n")
+	w.WriteString(fmt.Sprintf("\tresult := make([]*%s, 0, len(values))\n", typ))
+	w.WriteString("\tfor _, v := range values {\n")
+	w.WriteString("\t\tdata, err := base64.StdEncoding.DecodeString(v)\n")
+	w.WriteString("\t\tif err != nil {\n")
+	w.WriteString("\t\t\treturn nil, err\n")
+	w.WriteString("\t\t}\n")
+	w.WriteString(fmt.Sprintf("\t\tm := new(%s)\n", typ))
+	w.WriteString("\t\tif err := proto.Unmarshal(data, m); err != nil {\n")
+	w.WriteString("\t\t\treturn nil, err\n")
+	w.WriteString("\t\t}\n")
+	w.WriteString("\t\tresult = append(result, m)\n")
+	w.WriteString("\t}\n")
+	w.WriteString("\treturn result, nil\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SPop(ctx context.Context) (*%s, error) {\n", name, typ))
+	w.WriteString("\tvalue, err := t.client.Do(ctx, t.client.B().Spop().Key(t.key).Build()).ToString()\n")
+	w.WriteString("\tif err != nil {\n")
+	w.WriteString("\t\treturn nil, err\n")
+	w.WriteString("\t}\n")
+	w.WriteString("\tdata, err := base64.StdEncoding.DecodeString(value)\n")
+	w.WriteString("\tif err != nil {\n")
+	w.WriteString("\t\treturn nil, err\n")
+	w.WriteString("\t}\n")
+	w.WriteString(fmt.Sprintf("\tm := new(%s)\n", typ))
+	w.WriteString("\tif err := proto.Unmarshal(data, m); err != nil {\n")
+	w.WriteString("\t\treturn nil, err\n")
+	w.WriteString("\t}\n")
+	w.WriteString("\treturn m, nil\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SRandMember(ctx context.Context, count int64) ([]*%s, error) {\n", name, typ))
+	w.WriteString("\tvalues, err := t.client.Do(ctx, t.client.B().Srandmember().Key(t.key).Count(count).Build()).AsStrSlice()\n")
+	w.WriteString("\tif err != nil {\n")
+	w.WriteString("\t\treturn nil, err\n")
+	w.WriteString("\t}\n")
+	w.WriteString(fmt.Sprintf("\tresult := make([]*%s, 0, len(values))\n", typ))
+	w.WriteString("\tfor _, v := range values {\n")
+	w.WriteString("\t\tdata, err := base64.StdEncoding.DecodeString(v)\n")
+	w.WriteString("\t\tif err != nil {\n")
+	w.WriteString("\t\t\treturn nil, err\n")
+	w.WriteString("\t\t}\n")
+	w.WriteString(fmt.Sprintf("\t\tm := new(%s)\n", typ))
+	w.WriteString("\t\tif err := proto.Unmarshal(data, m); err != nil {\n")
+	w.WriteString("\t\t\treturn nil, err\n")
+	w.WriteString("\t\t}\n")
+	w.WriteString("\t\tresult = append(result, m)\n")
+	w.WriteString("\t}\n")
+	w.WriteString("\treturn result, nil\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SRem(ctx context.Context, members ...*%s) error {\n", name, typ))
+	w.WriteString("\tvalues := make([]string, 0, len(members))\n")
+	w.WriteString("\tfor _, member := range members {\n")
+	w.WriteString("\t\tdata, err := proto.Marshal(member)\n")
+	w.WriteString("\t\tif err != nil {\n")
+	w.WriteString("\t\t\treturn err\n")
+	w.WriteString("\t\t}\n")
+	w.WriteString("\t\tvalues = append(values, base64.StdEncoding.EncodeToString(data))\n")
+	w.WriteString("\t}\n")
+	w.WriteString("\treturn t.client.Do(ctx, t.client.B().Srem().Key(t.key).Member(values...).Build()).Error()\n")
+	w.WriteString("}\n\n")
+
+	w.WriteString(fmt.Sprintf("func (t *%s) SScan(ctx context.Context, cursor uint64, match string, count int64) (uint64, []*%s, error) {\n", name, typ))
+	w.WriteString("\tse, err := t.client.Do(ctx, t.client.B().Sscan().Key(t.key).Cursor(cursor).Match(match).Count(count).Build()).AsScanEntry()\n")
+	w.WriteString("\tif err != nil {\n")
+	w.WriteString("\t\treturn 0, nil, err\n")
+	w.WriteString("\t}\n")
+	w.WriteString(fmt.Sprintf("\tresult := make([]*%s, 0, len(se.Elements))\n", typ))
+	w.WriteString("\tfor _, v := range se.Elements {\n")
+	w.WriteString("\t\tdata, err := base64.StdEncoding.DecodeString(v)\n")
+	w.WriteString("\t\tif err != nil {\n")
+	w.WriteString("\t\t\treturn 0, nil, err\n")
+	w.WriteString("\t\t}\n")
+	w.WriteString(fmt.Sprintf("\t\tm := new(%s)\n", typ))
+	w.WriteString("\t\tif err := proto.Unmarshal(data, m); err != nil {\n")
+	w.WriteString("\t\t\treturn 0, nil, err\n")
+	w.WriteString("\t\t}\n")
+	w.WriteString("\t\tresult = append(result, m)\n")
+	w.WriteString("\t}\n")
+	w.WriteString("\treturn se.Cursor, result, nil\n")
 	w.WriteString("}\n\n")
 
 	return nil
