@@ -183,3 +183,59 @@ jetti pprof --http-3 <addr>
 ```
 
 Then, jetti is going to make pprof server with http3 in `gen/pprof/http3`.
+
+### redis
+
+`redis` is a simple command to make some types to using redis.
+
+#### new
+
+```bash
+jetti redis --new <path-name>
+```
+
+Then, jetti is going to make some types to using redis in `template/redis/<path-name>`.
+
+Example, if you run `jetti redis --new person`, jetti is going to make a file in `template/redis/person`.
+
+#### directions
+
+##### string
+
+```go
+//go:redis string <name> <key>
+```
+
+Jetti will generate the redis client for string type.
+
+#### string[generic]
+
+```go
+//go:redis string[<path>/<package>.<name>] <key>
+```
+
+Jetti will generate the redis client for string type with generic.
+
+> You must use protocol buffers type for generic.
+
+If you want to use the `Person` protobuf in `gen/model/person`, you can use it like this.
+
+```go
+//go:redis string[gen/model/person.Person] <key>
+```
+
+#### list
+
+```go
+//go:redis list <name> <key>
+
+//go:redis list[<path>/<package>.<name>] <key>
+```
+
+#### set
+
+```go
+//go:redis set <name> <key>
+
+//go:redis set[<path>/<package>.<name>] <key>
+```
