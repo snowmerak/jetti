@@ -6,9 +6,11 @@ import (
 	"path/filepath"
 )
 
+var protoFolder = filepath.Join("template", "proto")
+
 func ProtoNew(path string) {
-	packageName := "." + filepath.Dir(path)
-	path = filepath.Join("proto", path)
+	packageName := "./" + filepath.Dir(path)
+	path = filepath.Join(protoFolder, path)
 	dir := filepath.Dir(path)
 	base := filepath.Base(path)
 	ext := filepath.Ext(base)
