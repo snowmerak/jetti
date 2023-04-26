@@ -109,7 +109,7 @@ func RedisGenerate() {
 			return nil
 		}
 
-		generateFile := "generated/redis/" + strings.TrimPrefix(path, "template/redis/")
+		generateFile := generated + "/redis/" + strings.TrimPrefix(path, "template/redis/")
 		if err := os.MkdirAll(filepath.Dir(generateFile), os.ModePerm); err != nil {
 			return err
 		}

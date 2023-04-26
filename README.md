@@ -117,12 +117,12 @@ If, for example, you run `jetti proto --new person/person.proto`, the file will 
 #### build
 
 ```bash
-jetti proto --build
+jetti proto --generate
 ```
 
 Then, jetti is going to generate protobuf and gRPC code from proto files in `proto` directory.
 
-The generated code will be created in `generated/proto`.
+The generated code will be created in `gen/proto`.
 
 ### cmd
 
@@ -166,7 +166,7 @@ Then, jetti is going to run executable package from cmd files in `cmd` directory
 jetti pprof --http-1 <addr>
 ```
 
-Then, jetti is going to make pprof server with http1 in `generated/pprof/http1`.
+Then, jetti is going to make pprof server with http1 in `gen/pprof/http1`.
 
 #### http2
 
@@ -174,7 +174,7 @@ Then, jetti is going to make pprof server with http1 in `generated/pprof/http1`.
 jetti pprof --http-2 <addr>
 ```
 
-Then, jetti is going to make pprof server with http2 in `generated/pprof/http2`.
+Then, jetti is going to make pprof server with http2 in `gen/pprof/http2`.
 
 #### http3
 
@@ -182,4 +182,4 @@ Then, jetti is going to make pprof server with http2 in `generated/pprof/http2`.
 jetti pprof --http-3 <addr>
 ```
 
-Then, jetti is going to make pprof server with http3 in `generated/pprof/http3`.
+Then, jetti is going to make pprof server with http3 in `gen/pprof/http3`.

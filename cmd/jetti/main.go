@@ -20,7 +20,7 @@ func main() {
 		switch {
 		case param.Proto.New != "":
 			executor.ProtoNew(param.Proto.New)
-		case param.Proto.Build:
+		case param.Proto.Generate:
 			executor.ProtoBuild()
 		}
 	case cli.Bean:

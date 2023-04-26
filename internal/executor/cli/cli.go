@@ -11,8 +11,8 @@ const (
 
 type CLI struct {
 	Proto struct {
-		New   string `help:"Create a new proto file: <path>/<filename.proto>"`
-		Build bool   `help:"Build proto all files"`
+		New      string `help:"Create a new proto file: <path>/<filename.proto>"`
+		Generate bool   `help:"Generate proto all files"`
 	} `cmd:"" help:"Generate protobuf messages and grpc services"`
 	Bean struct {
 		Generate bool `help:"Generate bean container"`

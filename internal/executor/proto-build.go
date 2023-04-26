@@ -26,11 +26,11 @@ func ProtoBuild() {
 		panic(err)
 	}
 
-	if err := os.MkdirAll("generated/model", os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Join(generated, "model"), os.ModePerm); err != nil {
 		panic(err)
 	}
 
-	cmd := exec.Command("protoc", append([]string{"--proto_path=template/proto", "--go_out=generated/model", "--go_opt=paths=source_relative", "--go-grpc_out=generated/model", "--go-grpc_opt=paths=source_relative"}, protoFiles...)...)
+	cmd := exec.Command("protoc", append([]string{"--proto_path=template/proto", "--go_out=gen/model", "--go_opt=paths=source_relative", "--go-grpc_out=gen/model", "--go-grpc_opt=paths=source_relative"}, protoFiles...)...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
