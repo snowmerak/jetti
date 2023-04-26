@@ -19,11 +19,11 @@ func Init(projectName string) {
 		panic(err)
 	}
 
-	if err := os.MkdirAll("proto", os.ModePerm); err != nil {
+	if err := os.MkdirAll(protoFolder, os.ModePerm); err != nil {
 		panic(err)
 	}
 
-	if err := os.MkdirAll("uml", os.ModePerm); err != nil {
+	if err := os.MkdirAll(umlFolder, os.ModePerm); err != nil {
 		panic(err)
 	}
 

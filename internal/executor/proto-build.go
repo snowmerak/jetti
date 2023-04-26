@@ -8,12 +8,12 @@ import (
 )
 
 func ProtoBuild() {
-	if _, err := os.Stat("proto"); os.IsNotExist(err) {
+	if _, err := os.Stat(protoFolder); os.IsNotExist(err) {
 		panic(err)
 	}
 
 	protoFiles := []string(nil)
-	if err := filepath.Walk("proto", func(path string, info os.FileInfo, err error) error {
+	if err := filepath.Walk(protoFolder, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			return nil
 		}
@@ -30,7 +30,7 @@ func ProtoBuild() {
 		panic(err)
 	}
 
-	cmd := exec.Command("protoc", append([]string{"--proto_path=proto", "--go_out=generated/model", "--go_opt=paths=source_relative", "--go-grpc_out=generated/model", "--go-grpc_opt=paths=source_relative"}, protoFiles...)...)
+	cmd := exec.Command("protoc", append([]string{"--proto_path=template/proto", "--go_out=generated/model", "--go_opt=paths=source_relative", "--go-grpc_out=generated/model", "--go-grpc_opt=paths=source_relative"}, protoFiles...)...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
