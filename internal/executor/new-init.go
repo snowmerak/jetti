@@ -19,6 +19,10 @@ func Init(projectName string) {
 		panic(err)
 	}
 
+	if err := os.MkdirAll("statics", os.ModePerm); err != nil {
+		panic(err)
+	}
+
 	if err := os.MkdirAll(protoFolder, os.ModePerm); err != nil {
 		panic(err)
 	}
