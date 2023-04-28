@@ -12,7 +12,7 @@ func ClientRueidis(path string) {
 		return
 	}
 
-	folder := makeClientPath(dep.Import)
+	folder := makeSubPath(clientFolder, dep.Import)
 	if err := os.MkdirAll(folder, os.ModePerm); err != nil {
 		panic(err)
 	}

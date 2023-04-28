@@ -8,6 +8,7 @@ const (
 	Pprof  = "pprof"
 	Redis  = "redis"
 	Client = "client"
+	Config = "config"
 )
 
 type CLI struct {
@@ -40,4 +41,9 @@ type CLI struct {
 		GoRedis string `help:"Generate redis client(go-redis): <addr>"`
 		Nats    string `help:"Generate nats client: <addr>"`
 	} `cmd:"" help:"Generate client"`
+	Config struct {
+		NewJson string `help:"Create a new json config: <path+name>"`
+		NewYaml string `help:"Create a new yaml config: <path+name>"`
+		NewXml  string `help:"Create a new xml config: <path+name>"`
+	} `cmd:"" help:"Generate config"`
 }
