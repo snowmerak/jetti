@@ -107,7 +107,7 @@ func GenerateBean(models ...BeanModel) ([]byte, error) {
 	buffer.Write([]byte("}\n\n"))
 
 	buffer.Write([]byte("func New() *Builder {\n"))
-	buffer.Write([]byte("\treturn &Builder{}\n"))
+	buffer.Write([]byte("\treturn &Builder{new(Bean)}\n"))
 	buffer.Write([]byte("}\n\n"))
 
 	buffer.Write([]byte("func (b *Builder) Build() *Bean {\n"))
