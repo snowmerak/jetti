@@ -31,8 +31,13 @@ type CLI struct {
 		Http2 string `help:"Generate http2 pprof server: <addr>"`
 		Http3 string `help:"Generate http3 pprof server: <addr>"`
 	} `cmd:"" help:"Generate pprof server"`
-	Redis struct {
-		New      string `help:"Create a new redis type: <path+name>"`
-		Generate bool   `help:"Generate redis data types"`
-	} `cmd:"" help:"Generate redis data type"`
+	// Redis struct {
+	//	New      string `help:"Create a new redis type: <path+name>"`
+	//	Generate bool   `help:"Generate redis data types"`
+	// } `cmd:"" help:"Generate redis data type"`
+	Client struct {
+		Rueidis string `help:"Generate redis client(rueidis): <addr>"`
+		GoRedis string `help:"Generate redis client(go-redis): <addr>"`
+		Nats    string `help:"Generate nats client: <addr>"`
+	} `cmd:"" help:"Generate client"`
 }
