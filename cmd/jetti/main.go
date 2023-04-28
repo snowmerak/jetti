@@ -46,12 +46,22 @@ func main() {
 		if param.Pprof.Http3 != "" {
 			executor.PprofHttp3(param.Pprof.Http3)
 		}
-	case cli.Redis:
-		if param.Redis.New != "" {
-			executor.RedisNew(param.Redis.New)
+	// case cli.Redis:
+	//	if param.Redis.New != "" {
+	//		executor.RedisNew(param.Redis.New)
+	//	}
+	//	if param.Redis.Generate {
+	//		executor.RedisGenerate()
+	//	}
+	case cli.Client:
+		if param.Client.Rueidis != "" {
+			executor.ClientRueidis(param.Client.Rueidis)
 		}
-		if param.Redis.Generate {
-			executor.RedisGenerate()
+		if param.Client.GoRedis != "" {
+			executor.ClientGoRedis(param.Client.GoRedis)
+		}
+		if param.Client.Nats != "" {
+			executor.ClientNats(param.Client.Nats)
 		}
 	}
 }
