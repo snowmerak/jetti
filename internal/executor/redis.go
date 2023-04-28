@@ -37,47 +37,6 @@ func RedisNew(path string) {
 	}
 }
 
-type Dependency struct {
-	Import string
-	Type   string
-}
-
-func getDependencies(dataList []string) map[string]Dependency {
-	dependencies := make(map[string]Dependency)
-	for _, data := range dataList {
-		split := strings.Split(data, " ")
-		if len(split) != 3 {
-			continue
-		}
-
-		typ := ""
-		if strings.HasSuffix(split[0], "]") {
-			sp := strings.SplitAfterN(split[0], "[", 2)
-			typ = strings.TrimSuffix(sp[1], "]")
-		}
-
-		if typ == "" {
-			continue
-		}
-
-		split = strings.Split(typ, "/")
-
-		lastPackageNames := strings.Split(split[len(split)-1], ".")
-		lastPackageName := lastPackageNames[0]
-		typeName := split[len(split)-1]
-		split[len(split)-1] = lastPackageName
-
-		dep := Dependency{
-			Import: strings.Join(split, "/"),
-			Type:   typeName,
-		}
-
-		dependencies[data] = dep
-	}
-
-	return dependencies
-}
-
 func RedisGenerate() {
 	moduleName, err := finder.FindModuleName()
 	if err != nil {
