@@ -57,12 +57,12 @@ func getDependency(data string) *Dependency {
 	return &dep
 }
 
-func makeClientPath(path string) string {
+func makeSubPath(sub, path string) string {
 	folder := path
 	if runtime.GOOS == "windows" {
 		folder = strings.ReplaceAll(folder, "/", "\\")
 	}
-	return filepath.Join("lib", "client", folder)
+	return filepath.Join(sub, folder)
 }
 
 func goGet(dep string) error {
