@@ -19,6 +19,7 @@
 5. template: 제티가 프로젝트를 생성할 때 사용하는 파일들이 들어갑니다.
    1. proto: 프로토버퍼 파일들이 들어갑니다.
    2. model: json, yaml, xml 등의 샘플 파일이 포함됩니다.
+   3. configs: 설정 파일을 생성하기 위한 템플릿 파일들이 들어갑니다.
 6. gen: 제티가 생성한 파일들이 들어갑니다. 보통은 template 폴더 내의 파일들을 기반으로 생성됩니다.
    1. proto: 프로토버퍼 파일들이 컴파일되어 생성됩니다.
    2. model: json, yaml, xml 등의 샘플 파일들이 고랭 구조체로 변환되어 생성됩니다.
@@ -215,3 +216,55 @@ jetti pprof --http-3 <addr>
 `--http-3` 옵션의 값으로 http3 서버의 주소를 입력합니다.
 
 그러면 `gen/pprof/http3` 폴더에 http3 서버 코드가 생성됩니다.
+
+### json, yaml 모델 생성
+
+제티에는 `github.com/twpayne/go-jsonstruct/v2` 라이브러리의 도움으로 json, yaml 파일을 바로 고 언어 구조체로 변환하는 기능을 제공합니다.
+
+#### 모델 파일 생성
+
+```bash
+jetti model --new <path/name>.(json|yaml)
+```
+
+`model` 폴더 내에 새로운 모델 파일을 생성합니다. `--new` 옵션의 값으로 모델 파일의 경로와 이름을 입력합니다.
+
+- `jetti model -new person/person.json`를 입력하면 `template/model/person/person.json` 파일이 생성됩니다.  
+- `jetti model -new person/person.yaml`를 입력하면 `template/model/person/person.yaml` 파일이 생성됩니다.
+
+#### 모델 파일 변환
+
+```bash
+# json
+jetti model --json <path/name>.json
+
+# yaml
+jetti model --yaml <path/name>.yaml
+```
+
+- `--json` 옵션의 값으로 json 파일의 경로와 이름을 입력하면 `gen/model` 폴더에 json 파일을 바로 고 언어 구조체로 변환하여 생성합니다.
+- `--yaml` 옵션의 값으로 yaml 파일의 경로와 이름을 입력하면 `gen/model` 폴더에 yaml 파일을 바로 고 언어 구조체로 변환하여 생성합니다.
+
+### 설정 파일 생성
+
+제티는 `github.com/google/go-jsonnet` 라이브러리의 도움으로 `jsonnet` 파일을 `json`으로 컴파일 할 수 있습니다.
+
+#### 설정 파일 생성
+
+```bash
+jetti config --new <path/name>.jsonnet
+```
+
+`config` 폴더 내에 새로운 설정 파일을 생성합니다. `--new` 옵션의 값으로 설정 파일의 경로와 이름을 입력합니다.
+
+예를 들어, `jetti config -new person/person.jsonnet`를 입력하면 `template/config/person/person.jsonnet` 파일이 생성됩니다.
+
+#### 설정 파일 컴파일
+
+```bash
+jetti config --jsonnet <path/name>.jsonnet
+```
+
+`--jsonnet` 옵션의 값으로 설정 파일의 경로와 이름을 입력하면 `gen/config` 폴더에 json 파일로 컴파일하여 생성합니다.
+
+예를 들어, `jetti config --jsonnet person/person.jsonnet`를 입력하면 `gen/config/person/person.json` 파일이 생성됩니다.
