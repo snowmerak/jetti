@@ -9,6 +9,7 @@ const (
 	Redis  = "redis"
 	Client = "client"
 	Config = "config"
+	Model  = "model"
 )
 
 type CLI struct {
@@ -41,9 +42,14 @@ type CLI struct {
 		GoRedis string `help:"Generate redis client(go-redis): <addr>"`
 		Nats    string `help:"Generate nats client: <addr>"`
 	} `cmd:"" help:"Generate client"`
-	Config struct {
-		NewJson string `help:"Create a new json config: <path+name>"`
-		NewYaml string `help:"Create a new yaml config: <path+name>"`
-		NewXml  string `help:"Create a new xml config: <path+name>"`
-	} `cmd:"" help:"Generate config"`
+	// Config struct {
+	//	NewJson string `help:"Create a new json config: <path+name>"`
+	//	NewYaml string `help:"Create a new yaml config: <path+name>"`
+	//	NewXml  string `help:"Create a new xml config: <path+name>"`
+	// } `cmd:"" help:"Generate config"`
+	Model struct {
+		Json string `help:"Generate json model: <path+name>"`
+		Yaml string `help:"Generate yaml model: <path+name>"`
+		New  string `help:"Create a new model: <path+name>"`
+	} `cmd:"" help:"Generate model"`
 }
