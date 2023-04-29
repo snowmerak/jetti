@@ -63,5 +63,19 @@ func main() {
 		if param.Client.Nats != "" {
 			executor.ClientNats(param.Client.Nats)
 		}
+	// case cli.Config:
+	//	if param.Config.NewJson != "" {
+	//		//executor.ConfigNewJson(param.Config.NewJson)
+	//	}
+	case cli.Model:
+		if param.Model.Json != "" {
+			executor.ModelJson(param.Model.Json)
+		}
+		if param.Model.Yaml != "" {
+			executor.ModelYaml(param.Model.Yaml)
+		}
+		if param.Model.New != "" {
+			executor.ModelNew(param.Model.New)
+		}
 	}
 }
