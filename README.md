@@ -181,7 +181,27 @@ jetti proto --generate
 
 생성된 프로토버퍼 메시지나 gRPC 서비스를 바로 사용하실 수 있습니다.
 
-권장하는 방식으로 메시지는 VO와 DTO로 사용하고, gRPC 서비스는 서버와 클라이언트 폴더에 각각 생성하여 사용하는 것입니다.
+프로토버퍼 파일을 DTO로 적극 활용하기를 권장합니다.
+
+### 플랫버퍼
+
+#### 새 플랫버퍼 파일 생성
+
+```bash
+jetti fbs --new <path/fbs-name>
+```
+
+`fbs` 폴더 내에 새로운 플랫버퍼 파일을 생성합니다. `--new` 옵션의 값으로 플랫버퍼 파일의 경로와 이름을 입력합니다.
+
+예를 들어, `jetti fbs -new person/person.fbs`를 입력하면 `fbs/person/person.fbs` 파일이 생성됩니다.
+
+#### 플랫버퍼 파일 생성
+
+```bash
+jetti fbs --generate
+```
+
+`fbs` 폴더 내에 있는 모든 플랫버퍼 파일을 컴파일하여 `gen/fbs` 폴더에 생성합니다.
 
 ### 프로파일링 서버 생성
 
