@@ -159,6 +159,13 @@ func main() {
 
 ### 프로토버퍼
 
+프로토버퍼 파일을 컴파일 하기 위해선 `protoc`와 `protoc-gen-go`가 필요합니다.
+
+프로토버퍼 컴파일러는 [이곳](https://github.com/protocolbuffers/protobuf#protocol-compiler-installation)을 참고해서 설치해주세요.
+> 맥과 홈브루를 사용하신다면, `brew install protobuf`로 설치하실 수 있습니다.
+
+고 언어 용 프로토버퍼 플러그인은 `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`을 실행하여 설치하실 수 있습니다.
+
 #### 새 프로토버퍼 파일 생성
 
 ```bash
@@ -184,6 +191,10 @@ jetti proto --generate
 프로토버퍼 파일을 DTO로 적극 활용하기를 권장합니다.
 
 ### 플랫버퍼
+
+플랫버퍼를 사용하기 위해선 `flatc`를 설치해야합니다.
+
+[이곳](https://github.com/google/flatbuffers/releases)에서 최신 버전을 받은 후, 환경 변수에 추가해주세요.
 
 #### 새 플랫버퍼 파일 생성
 
