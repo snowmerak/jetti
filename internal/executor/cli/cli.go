@@ -6,6 +6,7 @@ const (
 	Cmd    = "cmd"
 	New    = "new"
 	Pprof  = "pprof"
+	Fbs    = "fbs"
 	Redis  = "redis"
 	Client = "client"
 	Config = "config"
@@ -17,6 +18,10 @@ type CLI struct {
 		New      string `help:"Create a new proto file: <path>/<filename.proto>"`
 		Generate bool   `help:"Generate proto all files"`
 	} `cmd:"" help:"Generate protobuf messages and grpc services"`
+	Fbs struct {
+		New      string `help:"Create a new flatbuffers file: <path>/<filename.fbs>"`
+		Generate bool   `help:"Generate flatbuffers all files"`
+	} `cmd:"" help:"Generate flatbuffers messages"`
 	Bean struct {
 		Generate bool `help:"Generate bean container"`
 	} `cmd:"" help:"Generate bean container"`

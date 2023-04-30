@@ -23,6 +23,13 @@ func main() {
 		case param.Proto.Generate:
 			executor.ProtoBuild()
 		}
+	case cli.Fbs:
+		switch {
+		case param.Fbs.New != "":
+			executor.FbsNew(param.Fbs.New)
+		case param.Fbs.Generate:
+			executor.FbsBuild()
+		}
 	case cli.Bean:
 		if param.Bean.Generate {
 			executor.Bean()
