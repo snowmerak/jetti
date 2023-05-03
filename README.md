@@ -260,8 +260,8 @@ jetti model --new <path/name>.(json|yaml)
 
 `model` 폴더 내에 새로운 모델 파일을 생성합니다. `--new` 옵션의 값으로 모델 파일의 경로와 이름을 입력합니다.
 
-- `jetti model -new person/person.json`를 입력하면 `template/model/person/person.json` 파일이 생성됩니다.  
-- `jetti model -new person/person.yaml`를 입력하면 `template/model/person/person.yaml` 파일이 생성됩니다.
+- `jetti model -new person/person.json`를 입력하면 `template/model/person/person.json.go` 파일이 생성됩니다.  
+- `jetti model -new person/person.yaml`를 입력하면 `template/model/person/person.yaml.go` 파일이 생성됩니다.
 
 #### 모델 파일 변환
 
