@@ -11,6 +11,38 @@ func Init(projectName string) {
 		panic(err)
 	}
 
+	if err := os.MkdirAll("lib/worker", os.ModePerm); err != nil {
+		panic(err)
+	}
+
+	if err := makeDocFile("lib/worker"); err != nil {
+		panic(err)
+	}
+
+	if err := os.MkdirAll("lib/client", os.ModePerm); err != nil {
+		panic(err)
+	}
+
+	if err := os.MkdirAll("lib/client", os.ModePerm); err != nil {
+		panic(err)
+	}
+
+	if err := os.MkdirAll("lib/server", os.ModePerm); err != nil {
+		panic(err)
+	}
+
+	if err := makeDocFile("lib/server"); err != nil {
+		panic(err)
+	}
+
+	if err := os.MkdirAll("lib/service", os.ModePerm); err != nil {
+		panic(err)
+	}
+
+	if err := makeDocFile("lib/service"); err != nil {
+		panic(err)
+	}
+
 	if err := os.MkdirAll("internal", os.ModePerm); err != nil {
 		panic(err)
 	}
