@@ -12,12 +12,13 @@ func ClientRueidis(path string) {
 		return
 	}
 
-	folder := makeSubPath(clientFolder, dep.Import)
+	lowerName := strings.ToLower(dep.Type)
+
+	folder := makeSubPath(clientFolder, lowerName)
 	if err := os.MkdirAll(folder, os.ModePerm); err != nil {
 		panic(err)
 	}
 
-	lowerName := strings.ToLower(dep.Type)
 	f, err := os.Create(filepath.Join(folder, lowerName+".go"))
 	if err != nil {
 		panic(err)
@@ -30,7 +31,7 @@ func ClientRueidis(path string) {
 
 	buffer := strings.Builder{}
 	buffer.WriteString("package " + lowerName + "\n\n")
-	buffer.WriteString("import \"github.com/rueian/rueidis\"\n\n")
+	buffer.WriteString("import \"github.com/redis/rueidis\"\n\n")
 	buffer.WriteString("type " + dep.Type + " struct {\n")
 	buffer.WriteString("\tclient rueidis.Client\n")
 	buffer.WriteString("}\n\n")

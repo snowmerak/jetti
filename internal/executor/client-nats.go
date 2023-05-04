@@ -12,13 +12,12 @@ func ClientNats(path string) {
 		return
 	}
 
-	folder := makeSubPath(clientFolder, dep.Import)
+	lowerName := strings.ToLower(dep.Type)
+	folder := makeSubPath(clientFolder, lowerName)
 
 	if err := os.MkdirAll(folder, os.ModePerm); err != nil {
 		panic(err)
 	}
-
-	lowerName := strings.ToLower(dep.Type)
 
 	buffer := strings.Builder{}
 	buffer.WriteString("package " + lowerName + "\n\n")
