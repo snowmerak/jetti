@@ -42,7 +42,7 @@ func ClientRueidis(path string) {
 		panic(err)
 	}
 
-	if err := goGet("github.com/rueian/rueidis"); err != nil {
+	if err := goGet("github.com/redis/rueidis"); err != nil {
 		panic(err)
 	}
 }
