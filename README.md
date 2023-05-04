@@ -299,3 +299,57 @@ jetti config --jsonnet <path/name>.jsonnet
 `--jsonnet` 옵션의 값으로 설정 파일의 경로와 이름을 입력하면 `gen/config` 폴더에 json 파일로 컴파일하여 생성합니다.
 
 예를 들어, `jetti config --jsonnet person/person.jsonnet`를 입력하면 `gen/config/person/person.json` 파일이 생성됩니다.
+
+### 클라이언트 생성
+
+제티는 몇몇 서버나 데이터베이스, 미들웨어에 대한 클라이언트 래퍼를 만들어 줍니다.
+
+#### rueidis
+
+```bash
+jetti client --rueidis <path/package-name>
+```
+
+`--rueidis` 옵션의 값으로 rueidis 클라이언트의 패키지 경로와 이름을 입력합니다.
+
+그러면 `lib/client/<path/package-name>` 폴더에 rueidis 클라이언트 래퍼 코드가 생성됩니다.  
+예를 들어, `jetti client --rueidis person`을 입력하면 `lib/client/person` 폴더에 코드가 생성됩니다.
+
+#### go-redis
+
+```bash
+jetti client --go-redis <path/package-name>
+```
+
+`--go-redis` 옵션의 값으로 go-redis 클라이언트의 패키지 경로와 이름을 입력합니다.
+
+그러면 `lib/client/<path/package-name>` 폴더에 go-redis 클라이언트 래퍼 코드가 생성됩니다.  
+예를 들어, `jetti client --go-redis person`을 입력하면 `lib/client/person` 폴더에 코드가 생성됩니다.
+
+#### nats 
+
+```bash
+jetti client --nats <path/package-name>
+```
+
+`--nats` 옵션의 값으로 nats 클라이언트의 패키지 경로와 이름을 입력합니다.
+
+그러면 `lib/client/<path/package-name>` 폴더에 nats 클라이언트 래퍼 코드가 생성됩니다.  
+예를 들어, `jetti client --nats person`을 입력하면 `lib/client/person` 폴더에 코드가 생성됩니다.
+
+### 워커 생성
+
+제티는 몇몇 유용한 워커 코드를 생성해 줍니다.
+
+#### ants with template functions
+
+이 기능은 `github.com/panjf2000/ants/v2` 라이브러리의 코드를 기반으로 고유의 시그니처를 가진 함수를 실행하는 고루틴 풀을 생성합니다.
+
+```bash
+jetti worker --ants <path/package-name>
+```
+
+`--ants` 옵션의 값으로 ants 워커의 패키지 경로와 이름을 입력합니다.
+
+그러면 `lib/worker/<path/package-name>` 폴더에 ants 코드가 생성됩니다.  
+예를 들어, `jetti worker --ants=adder,int32,int32`을 입력하면 `lib/worker/adder` 폴더에 `func(int32, int32)`를 받고, `int32`와 `int32`를 인자로 받아 실행하는 고루틴 풀이 생성됩니다.
