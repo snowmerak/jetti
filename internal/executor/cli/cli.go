@@ -11,6 +11,7 @@ const (
 	Client = "client"
 	Config = "config"
 	Model  = "model"
+	Worker = "worker"
 )
 
 type CLI struct {
@@ -47,6 +48,9 @@ type CLI struct {
 		GoRedis string `help:"Generate redis client(go-redis): <addr>"`
 		Nats    string `help:"Generate nats client: <addr>"`
 	} `cmd:"" help:"Generate client"`
+	Worker struct {
+		Ants []string `help:"Generate goroutine pool worker(ants): <pool-name>,<func-param>..."`
+	} `cmd:"" help:"Generate worker"`
 	Model struct {
 		Generate string `help:"Generate json/yaml model: <path+name>"`
 		New      string `help:"Create a new model: <path+name>"`

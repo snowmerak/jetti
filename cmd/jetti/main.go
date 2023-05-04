@@ -70,6 +70,10 @@ func main() {
 		if param.Client.Nats != "" {
 			executor.ClientNats(param.Client.Nats)
 		}
+	case cli.Worker:
+		if param.Worker.Ants != nil {
+			executor.WorkerAnts(param.Worker.Ants[0], param.Worker.Ants[1:]...)
+		}
 	case cli.Config:
 		if param.Config.New != "" {
 			executor.ConfigNew(param.Config.New)
