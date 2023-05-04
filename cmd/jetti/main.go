@@ -78,11 +78,8 @@ func main() {
 			executor.ClientJsonnet(param.Config.Jsonnet)
 		}
 	case cli.Model:
-		if param.Model.Json != "" {
-			executor.ModelJson(param.Model.Json)
-		}
-		if param.Model.Yaml != "" {
-			executor.ModelYaml(param.Model.Yaml)
+		if param.Model.Generate != "" {
+			executor.ModelGenerate(param.Model.Generate)
 		}
 		if param.Model.New != "" {
 			executor.ModelNew(param.Model.New)

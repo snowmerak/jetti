@@ -48,9 +48,8 @@ type CLI struct {
 		Nats    string `help:"Generate nats client: <addr>"`
 	} `cmd:"" help:"Generate client"`
 	Model struct {
-		Json string `help:"Generate json model: <path+name>"`
-		Yaml string `help:"Generate yaml model: <path+name>"`
-		New  string `help:"Create a new model: <path+name>"`
+		Generate string `help:"Generate json/yaml model: <path+name>"`
+		New      string `help:"Create a new model: <path+name>"`
 	} `cmd:"" help:"Generate model"`
 	Config struct {
 		New     string `help:"Create a new jsonnet config file: <path+name>"`

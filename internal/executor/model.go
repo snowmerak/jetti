@@ -33,6 +33,17 @@ func ModelNew(path string) {
 	}
 }
 
+func ModelGenerate(path string) {
+	switch filepath.Ext(path) {
+	case ".json":
+		ModelJson(path)
+	case ".yaml":
+		ModelYaml(path)
+	}
+
+	panic("unsupported file type, only support json/yaml")
+}
+
 func ModelJson(path string) {
 	filename := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
 	typeName := strcase.SnakeToPascal(filename)
