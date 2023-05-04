@@ -346,7 +346,7 @@ jetti client --nats <path/package-name>
 이 기능은 `github.com/panjf2000/ants/v2` 라이브러리의 코드를 기반으로 고유의 시그니처를 가진 함수를 실행하는 고루틴 풀을 생성합니다.
 
 ```bash
-jetti worker --ants <path/package-name>
+jetti worker --ants=<path/package-name>,<type>,...
 ```
 
 `--ants` 옵션의 값으로 ants 워커의 패키지 경로와 이름을 입력합니다.
