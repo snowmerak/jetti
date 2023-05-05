@@ -12,6 +12,7 @@ const (
 	Config = "config"
 	Model  = "model"
 	Worker = "worker"
+	Server = "server"
 )
 
 type CLI struct {
@@ -51,6 +52,11 @@ type CLI struct {
 	Worker struct {
 		Ants []string `help:"Generate goroutine pool worker(ants): <pool-name>,<func-param>..."`
 	} `cmd:"" help:"Generate worker"`
+	Server struct {
+		Tcp  string `help:"Generate tcp server: <addr>"`
+		Http string `help:"Generate http1 server: <addr>"`
+		Quic string `help:"Generate quic server: <addr>"`
+	} `cmd:"" help:"Generate server"`
 	Model struct {
 		Generate string `help:"Generate json/yaml model: <path+name>"`
 		New      string `help:"Create a new model: <path+name>"`

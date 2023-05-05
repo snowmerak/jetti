@@ -74,6 +74,13 @@ func main() {
 		if param.Worker.Ants != nil {
 			executor.WorkerAnts(param.Worker.Ants[0], param.Worker.Ants[1:]...)
 		}
+	case cli.Server:
+		if param.Server.Tcp != "" {
+			executor.ServerTcp(param.Server.Tcp)
+		}
+		if param.Server.Http != "" {
+			executor.ServerHttp(param.Server.Http)
+		}
 	case cli.Config:
 		if param.Config.New != "" {
 			executor.ConfigNew(param.Config.New)
