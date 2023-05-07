@@ -165,6 +165,43 @@ func GenerateFile(pkg *model.Package) ([]byte, error) {
 		rs.WriteString("}\n")
 	}
 
+	for _, method := range pkg.Methods {
+		rs.WriteString("\n")
+		rs.WriteString("func (" + method.Receiver.Name + " *")
+		rs.WriteString(method.Receiver.Type)
+		rs.WriteString(") ")
+		rs.WriteString(method.Name)
+		rs.WriteString("(")
+		for i, param := range method.Params {
+			if i > 0 {
+				rs.WriteString(", ")
+			}
+			rs.WriteString(param.Name)
+			rs.WriteString(" ")
+			rs.WriteString(param.Type)
+		}
+		rs.WriteString(")")
+		if len(method.Return) > 0 {
+			rs.WriteString(" (")
+			for i, ret := range method.Return {
+				if i > 0 {
+					rs.WriteString(", ")
+				}
+				rs.WriteString(ret.Name)
+				rs.WriteString(" ")
+				rs.WriteString(ret.Type)
+			}
+			rs.WriteString(")")
+		}
+		rs.WriteString(" {\n")
+		for _, code := range method.Code {
+			rs.WriteString("\t")
+			rs.WriteString(code)
+			rs.WriteString("\n")
+		}
+		rs.WriteString("}\n")
+	}
+
 	fd, err := format.Source(rs.Bytes())
 	if err != nil {
 		return nil, err
