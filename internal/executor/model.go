@@ -2,166 +2,169 @@ package executor
 
 import (
 	"bytes"
-	"fmt"
+	"github.com/snowmerak/jetti/lib/generator"
+	"github.com/snowmerak/jetti/lib/model"
 	"github.com/snowmerak/jetti/lib/strcase"
+	"github.com/twpayne/go-jsonstruct/v2"
+	"go/format"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
 
-func ModelNew(path string) {
-	content := ""
-
-	switch filepath.Ext(path) {
-	case ".json":
-		content = "{}"
-	case ".yaml":
-		content = "a: b"
-	default:
-		panic("unsupported file type, only support json/yaml")
-	}
-
-	if err := os.MkdirAll("template/model/"+filepath.Dir(path), os.ModePerm); err != nil {
-		panic(err)
-	}
-
-	targetFilePath := "template/model/" + path
-	if err := os.WriteFile(targetFilePath, []byte(content), os.ModePerm); err != nil {
-		panic(err)
-	}
-}
-
-func ModelGenerate(path string) {
-	switch filepath.Ext(path) {
-	case ".json":
-		ModelJson(path)
-	case ".yaml":
-		ModelYaml(path)
-	}
-
-	panic("unsupported file type, only support json/yaml")
-}
-
-func ModelJson(path string) {
-	filename := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
-	typeName := strcase.SnakeToPascal(filename)
+func convertJson(path string) error {
 	packageName := filepath.Base(filepath.Dir(path))
+	fileName := filepath.Base(path)
+	fileName = fileName[:len(fileName)-len(filepath.Ext(fileName))]
+	structName := strcase.SnakeToPascal(fileName)
 
-	if runtime.GOOS == "windows" {
-		path = strings.ReplaceAll(path, "\\", "/")
+	gen := jsonstruct.NewGenerator(jsonstruct.WithTypeName(structName))
+
+	if err := gen.ObserveJSONFile(path); err != nil {
+		return err
 	}
 
-	targetFilePath := "template/model/" + path
+	buffer := bytes.NewBuffer(nil)
 
-	generator := jsonstruct.NewGenerator(
-		jsonstruct.WithIntType("int64"),
-		jsonstruct.WithPackageName(packageName),
-		jsonstruct.WithTypeName(typeName),
-		jsonstruct.WithOmitEmpty(jsonstruct.OmitEmptyAuto),
-		jsonstruct.WithImports("os", "github.com/goccy/go-json"),
-		jsonstruct.WithGoFormat(true))
-
-	if err := generator.ObserveJSONFile(targetFilePath); err != nil {
-		panic(err)
+	pkg := &model.Package{
+		Name: packageName,
+		Imports: []model.Import{
+			{
+				Path: "github.com/goccy/go-json",
+			},
+			{
+				Path: "io",
+			},
+			{
+				Path: "os",
+			},
+		},
+		Functions: []model.Function{
+			{
+				Name: structName + "FromJSON",
+				Params: []model.Field{
+					{
+						Name: "data",
+						Type: "[]byte",
+					},
+				},
+				Return: []model.Field{
+					{
+						Type: "*" + structName,
+					},
+					{
+						Type: "error",
+					},
+				},
+				Code: []string{
+					"v := new(" + structName + ")",
+					"if err := json.Unmarshal(data, &v); err != nil {",
+					"\treturn nil, err",
+					"}",
+					"return v, nil",
+				},
+			},
+			{
+				Name: structName + "FromFile",
+				Params: []model.Field{
+					{
+						Name: "path",
+						Type: "string",
+					},
+				},
+				Return: []model.Field{
+					{
+						Type: "*" + structName,
+					},
+					{
+						Type: "error",
+					},
+				},
+				Code: []string{
+					"f, err := os.ReadFile(path)",
+					"if err != nil {",
+					"\treturn nil, err",
+					"}",
+					"return " + structName + "FromJSON(f)",
+				},
+			},
+		},
+		Methods: []model.Method{
+			{
+				Name: "Marshal2JSON",
+				Receiver: model.Field{
+					Name: strings.ToLower(structName),
+					Type: structName,
+				},
+				Return: []model.Field{
+					{
+						Type: "[]byte",
+					},
+					{
+						Type: "error",
+					},
+				},
+				Code: []string{
+					"return json.Marshal($RECEIVER$)",
+				},
+			},
+			{
+				Name: "Encode2JSON",
+				Receiver: model.Field{
+					Name: strings.ToLower(structName),
+					Type: structName,
+				},
+				Params: []model.Field{
+					{
+						Name: "w",
+						Type: "io.Writer",
+					},
+				},
+				Return: []model.Field{
+					{
+						Type: "error",
+					},
+				},
+				Code: []string{
+					"return json.NewEncoder(w).Encode($RECEIVER$)",
+				},
+			},
+		},
 	}
 
-	code, err := generator.Generate()
+	data, err := generator.GenerateFile(pkg)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	buffer := bytes.NewBuffer(code)
-	buffer.WriteString("\n")
-	buffer.WriteString(fmt.Sprintf("func (m *%s) ToJson() ([]byte, error) {\n", typeName))
-	buffer.WriteString("\treturn json.Marshal(m)\n")
-	buffer.WriteString("}\n\n")
-	buffer.WriteString(fmt.Sprintf("func FromBytes(data []byte) (*%s, error) {\n", typeName))
-	buffer.WriteString(fmt.Sprintf("\tm := new(%s)\n", typeName))
-	buffer.WriteString("\terr := json.Unmarshal(data, m)\n")
-	buffer.WriteString("\treturn m, err\n")
-	buffer.WriteString("}\n\n")
-	buffer.WriteString(fmt.Sprintf("func FromFile(path string) (*%s, error) {\n", typeName))
-	buffer.WriteString("\tdata, err := os.ReadFile(path)\n")
-	buffer.WriteString("\tif err != nil {\n")
-	buffer.WriteString("\t\treturn nil, err\n")
-	buffer.WriteString("\t}\n")
-	buffer.WriteString(fmt.Sprintf("\treturn FromBytes(data)\n"))
-	buffer.WriteString("}\n\n")
+	buffer.Write(data)
 
-	if err := os.MkdirAll("gen/model/"+filepath.Dir(path), os.ModePerm); err != nil {
-		panic(err)
+	data, err = gen.Generate()
+	if err != nil {
+		return err
 	}
 
-	saveFilePath := "gen/model/" + path + ".go"
-	if err := os.WriteFile(saveFilePath, code, os.ModePerm); err != nil {
-		panic(err)
+	data = bytes.ReplaceAll(data, []byte("package main"), []byte{})
+
+	buffer.Write(data)
+
+	data, err = format.Source(buffer.Bytes())
+	if err != nil {
+		return err
 	}
 
-	if err := goGet("github.com/goccy/go-json"); err != nil {
-		panic(err)
+	f, err := os.Create(path + ".go")
+	if err != nil {
+		return err
 	}
+
+	if _, err := f.Write(data); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func ModelYaml(path string) {
-	filename := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
-	typeName := strcase.SnakeToPascal(filename)
-	packageName := filepath.Base(filepath.Dir(path))
 
-	if runtime.GOOS == "windows" {
-		path = strings.ReplaceAll(path, "\\", "/")
-	}
-
-	targetFilePath := "template/model/" + path
-
-	generator := jsonstruct.NewGenerator(
-		jsonstruct.WithIntType("int64"),
-		jsonstruct.WithPackageName(packageName),
-		jsonstruct.WithTypeName(typeName),
-		jsonstruct.WithOmitEmpty(jsonstruct.OmitEmptyAuto),
-		jsonstruct.WithImports("os", "github.com/goccy/go-yaml"),
-		jsonstruct.WithGoFormat(true))
-
-	if err := generator.ObserveYAMLFile(targetFilePath); err != nil {
-		panic(err)
-	}
-
-	code, err := generator.Generate()
-	if err != nil {
-		panic(err)
-	}
-
-	buffer := bytes.NewBuffer(code)
-	buffer.WriteString("\n")
-	buffer.WriteString("func (y *" + typeName + ") ToYaml() ([]byte, error) {\n")
-	buffer.WriteString("\treturn yaml.Marshal(y)\n")
-	buffer.WriteString("}\n\n")
-	buffer.WriteString(fmt.Sprintf("func FromBytes(data []byte) (*%s, error) {\n", typeName))
-	buffer.WriteString(fmt.Sprintf("\tr := new(%s)\n", typeName))
-	buffer.WriteString("\terr := yaml.Unmarshal(data, r)\n")
-	buffer.WriteString("\tif err != nil {\n")
-	buffer.WriteString("\t\treturn nil, err\n")
-	buffer.WriteString("\t}\n")
-	buffer.WriteString("\treturn r, nil\n")
-	buffer.WriteString("}\n\n")
-	buffer.WriteString(fmt.Sprintf("func FromFile(path string) (*%s, error) {\n", typeName))
-	buffer.WriteString("\tdata, err := os.ReadFile(path)\n")
-	buffer.WriteString("\tif err != nil {\n")
-	buffer.WriteString("\t\treturn nil, err\n")
-	buffer.WriteString("\t}\n")
-	buffer.WriteString(fmt.Sprintf("\treturn FromBytes(data)\n"))
-	buffer.WriteString("}\n\n")
-
-	if err := os.MkdirAll("gen/model/"+filepath.Dir(path), os.ModePerm); err != nil {
-		panic(err)
-	}
-
-	saveFilePath := "gen/model/" + path + ".go"
-	if err := os.WriteFile(saveFilePath, buffer.Bytes(), os.ModePerm); err != nil {
-		panic(err)
-	}
-
-	if err := goGet("github.com/goccy/go-yaml"); err != nil {
-		panic(err)
-	}
 }
