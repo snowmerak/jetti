@@ -1,12 +1,21 @@
 package executor
 
 import (
+	"github.com/snowmerak/jetti/internal/executor/check"
 	"github.com/snowmerak/jetti/internal/executor/generate"
+	"github.com/snowmerak/jetti/lib/parser"
 	"os"
 	"path/filepath"
 )
 
 func Generate(root string) error {
+	moduleName, err := check.GetModuleName(root)
+	if err != nil {
+		return err
+	}
+
+	beanStructs := make([]string, 0)
+
 	if err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			return nil
@@ -14,6 +23,19 @@ func Generate(root string) error {
 
 		switch filepath.Ext(path) {
 		case ".go":
+			pkg, err := parser.ParseFile(path)
+			if err != nil {
+				return err
+			}
+
+			beans, err := check.HasBean(pkg)
+			if err != nil {
+				return err
+			}
+
+			for _, bean := range beans {
+				beanStructs = append(beanStructs, path+"/"+bean.Name)
+			}
 		case ".json":
 			if err := generate.ConvertJson(path); err != nil {
 				return err
@@ -38,6 +60,10 @@ func Generate(root string) error {
 
 		return nil
 	}); err != nil {
+		return err
+	}
+
+	if err := generate.MakeContextPackage(root, moduleName, beanStructs...); err != nil {
 		return err
 	}
 
