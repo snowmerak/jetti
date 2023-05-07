@@ -2,7 +2,7 @@ package generator
 
 import (
 	"bytes"
-	"github.com/snowmerak/jetti/internal/model"
+	"github.com/snowmerak/jetti/lib/model"
 	"go/format"
 	"strings"
 )

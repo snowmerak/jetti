@@ -3,8 +3,7 @@ package executor
 import (
 	"bytes"
 	"fmt"
-	"github.com/snowmerak/jetti/internal/strcase"
-	"github.com/twpayne/go-jsonstruct/v2"
+	"github.com/snowmerak/jetti/lib/strcase"
 	"os"
 	"path/filepath"
 	"runtime"
