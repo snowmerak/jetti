@@ -11,6 +11,7 @@ type Package struct {
 	Imports    []Import
 	Structs    []Struct
 	Interfaces []Interface
+	Functions  []Function
 }
 
 type Import struct {
@@ -29,10 +30,18 @@ type Method struct {
 	Name   string
 	Params []Field
 	Return []Field
+	Code   []string
 }
 
 type Interface struct {
 	Doc     string
 	Name    string
 	Methods []Method
+}
+
+type Function struct {
+	Name   string
+	Params []Field
+	Return []Field
+	Code   []string
 }
