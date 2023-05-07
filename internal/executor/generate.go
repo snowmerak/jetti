@@ -28,14 +28,11 @@ func Generate(root string) error {
 				return err
 			}
 
-			beans, err := check.HasBean(pkg)
+			beans, err := check.HasBean(path, pkg)
 			if err != nil {
 				return err
 			}
-
-			for _, bean := range beans {
-				beanStructs = append(beanStructs, path+"/"+bean.Name)
-			}
+			beanStructs = append(beanStructs, beans...)
 		case ".json":
 			if err := generate.ConvertJson(path); err != nil {
 				return err

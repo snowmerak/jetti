@@ -5,12 +5,12 @@ import (
 	"strings"
 )
 
-func HasBean(pkg *model.Package) ([]model.Struct, error) {
-	rs := make([]model.Struct, 0)
+func HasBean(path string, pkg *model.Package) ([]string, error) {
+	rs := make([]string, 0)
 
 	for _, st := range pkg.Structs {
 		if strings.Contains(st.Doc, "jetti:bean") {
-			rs = append(rs, st)
+			rs = append(rs, path+"/"+st.Name)
 		}
 	}
 
