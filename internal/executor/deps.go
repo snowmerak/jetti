@@ -65,6 +65,11 @@ func makeSubPath(sub, path string) string {
 	return filepath.Join(sub, folder)
 }
 
+const (
+	goccyJson = "github.com/goccy/go-json"
+	goccyYaml = "github.com/goccy/go-yaml"
+)
+
 func goGet(dep string) error {
 	switch _, err := exec.Command("go", "get", "-u", dep).Output(); err.(type) {
 	case nil:
