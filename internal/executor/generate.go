@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"github.com/snowmerak/jetti/internal/executor/generate"
 	"os"
 	"path/filepath"
 )
@@ -14,12 +15,23 @@ func Generate(root string) error {
 		switch filepath.Ext(path) {
 		case ".go":
 		case ".json":
-			if err := convertJson(path); err != nil {
+			if err := generate.ConvertJson(path); err != nil {
 				return err
 			}
 		case ".yml":
 			fallthrough
 		case ".yaml":
+			if err := generate.ConvertYaml(path); err != nil {
+				return err
+			}
+		case ".proto":
+			if err := generate.BuildProtobuf(root, path); err != nil {
+				return err
+			}
+		case ".fbs":
+			if err := generate.BuildFlatbuffers(root, path); err != nil {
+				return err
+			}
 		default:
 			return nil
 		}
