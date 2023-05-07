@@ -1,48 +1,13 @@
 package parser
 
 import (
+	"github.com/snowmerak/jetti/internal/model"
 	"go/ast"
 	"go/parser"
 	"go/token"
 )
 
-type Field struct {
-	Name string
-	Type string
-	Tag  string
-}
-
-type Package struct {
-	Name       string
-	Imports    []Import
-	Structs    []Struct
-	Interfaces []Interface
-}
-
-type Import struct {
-	Alias string
-	Path  string
-}
-
-type Struct struct {
-	Doc    string
-	Name   string
-	Fields []Field
-}
-
-type Method struct {
-	Name   string
-	Params []Field
-	Return []Field
-}
-
-type Interface struct {
-	Doc     string
-	Name    string
-	Methods []Method
-}
-
-func ParseFile(path string) (*Package, error) {
+func ParseFile(path string) (*model.Package, error) {
 	fs := token.NewFileSet()
 	f, err := parser.ParseFile(fs, path, nil, parser.ParseComments)
 	if err != nil {
@@ -50,9 +15,9 @@ func ParseFile(path string) (*Package, error) {
 	}
 
 	packageName := ""
-	structs := []Struct(nil)
-	interfaces := []Interface(nil)
-	imports := []Import(nil)
+	structs := []model.Struct(nil)
+	interfaces := []model.Interface(nil)
+	imports := []model.Import(nil)
 	ast.Inspect(f, func(n ast.Node) bool {
 		if n == nil {
 			return true
@@ -61,7 +26,7 @@ func ParseFile(path string) (*Package, error) {
 		case *ast.File:
 			packageName = x.Name.Name
 		case *ast.ImportSpec:
-			imp := Import{
+			imp := model.Import{
 				Path: x.Path.Value,
 			}
 			if x.Name != nil {
@@ -75,7 +40,7 @@ func ParseFile(path string) (*Package, error) {
 				case *ast.TypeSpec:
 					switch e := p.Type.(type) {
 					case *ast.StructType:
-						st := Struct{
+						st := model.Struct{
 							Doc:  doc,
 							Name: p.Name.Name,
 						}
@@ -84,7 +49,7 @@ func ParseFile(path string) (*Package, error) {
 							if !ok {
 								continue
 							}
-							fi := Field{
+							fi := model.Field{
 								Name: field.Names[0].Name,
 								Type: typ.Name,
 							}
@@ -95,7 +60,7 @@ func ParseFile(path string) (*Package, error) {
 						}
 						structs = append(structs, st)
 					case *ast.InterfaceType:
-						it := Interface{
+						it := model.Interface{
 							Doc:  doc,
 							Name: p.Name.Name,
 						}
@@ -104,7 +69,7 @@ func ParseFile(path string) (*Package, error) {
 							if !ok {
 								continue
 							}
-							m := Method{
+							m := model.Method{
 								Name: method.Names[0].Name,
 							}
 							if fun.Params != nil {
@@ -113,7 +78,7 @@ func ParseFile(path string) (*Package, error) {
 									if !ok {
 										continue
 									}
-									f := Field{
+									f := model.Field{
 										Type: typ.Name,
 									}
 									if len(param.Names) > 0 {
@@ -128,7 +93,7 @@ func ParseFile(path string) (*Package, error) {
 									if !ok {
 										continue
 									}
-									f := Field{
+									f := model.Field{
 										Type: typ.Name,
 									}
 									if len(result.Names) > 0 {
@@ -147,7 +112,7 @@ func ParseFile(path string) (*Package, error) {
 		return true
 	})
 
-	return &Package{
+	return &model.Package{
 		Name:       packageName,
 		Structs:    structs,
 		Interfaces: interfaces,
