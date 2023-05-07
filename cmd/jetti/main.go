@@ -11,13 +11,18 @@ func main() {
 	param := &cli.CLI{}
 	ctx := kong.Parse(param)
 
+	pwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
 	switch ctx.Command() {
 	case cli.Generate:
-		pwd, err := os.Getwd()
-		if err != nil {
+		if err := executor.Generate(pwd); err != nil {
 			panic(err)
 		}
-		if err := executor.Generate(pwd); err != nil {
+	case cli.New:
+		if err := executor.New(pwd, param.New.ModuleName); err != nil {
 			panic(err)
 		}
 	}

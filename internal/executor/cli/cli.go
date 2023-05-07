@@ -2,6 +2,7 @@ package cli
 
 const (
 	Generate = "generate"
+	New      = "new <module-name>"
 )
 
 /*
@@ -16,4 +17,7 @@ TODO: add json/yaml
 type CLI struct {
 	Generate struct {
 	} `cmd:"" help:"Generate code"`
+	New struct {
+		ModuleName string `arg:"" help:"Module name"`
+	} `cmd:"" help:"Create a new project"`
 }
