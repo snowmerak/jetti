@@ -157,8 +157,17 @@ func convertJson(path string) error {
 	if err != nil {
 		return err
 	}
+	defer func(f *os.File) {
+		if err := f.Close(); err != nil {
+			panic(err)
+		}
+	}(f)
 
 	if _, err := f.Write(data); err != nil {
+		return err
+	}
+
+	if err := goGet(goccyJson); err != nil {
 		return err
 	}
 
