@@ -196,7 +196,7 @@ func GenerateFile(pkg *model.Package) ([]byte, error) {
 		rs.WriteString(" {\n")
 		for _, code := range method.Code {
 			rs.WriteString("\t")
-			rs.WriteString(code)
+			rs.WriteString(strings.ReplaceAll(code, RECEIVER, method.Receiver.Name))
 			rs.WriteString("\n")
 		}
 		rs.WriteString("}\n")
