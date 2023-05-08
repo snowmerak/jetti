@@ -2,9 +2,10 @@ package generator
 
 import (
 	"bytes"
-	"github.com/snowmerak/jetti/lib/model"
 	"go/format"
 	"strings"
+
+	"github.com/snowmerak/jetti/lib/model"
 )
 
 const (
