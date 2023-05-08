@@ -2,6 +2,7 @@ package generator
 
 import (
 	"bytes"
+	"fmt"
 	"go/format"
 	"strings"
 
@@ -28,6 +29,14 @@ func GenerateFile(pkg *model.Package) ([]byte, error) {
 		rs.WriteString("\"")
 		rs.WriteString(imp.Path)
 		rs.WriteString("\"\n")
+	}
+
+	for _, alias := range pkg.Aliases {
+		rs.WriteString("\ntype ")
+		rs.WriteString(alias.Name)
+		rs.WriteString(" ")
+		rs.WriteString(alias.Type)
+		rs.WriteString("\n")
 	}
 
 	for _, st := range pkg.Structs {
@@ -202,6 +211,8 @@ func GenerateFile(pkg *model.Package) ([]byte, error) {
 		}
 		rs.WriteString("}\n")
 	}
+
+	fmt.Println(rs.String())
 
 	fd, err := format.Source(rs.Bytes())
 	if err != nil {

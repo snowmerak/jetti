@@ -13,6 +13,7 @@ type Package struct {
 	Interfaces []Interface
 	Functions  []Function
 	Methods    []Method
+	Aliases    []Alias
 }
 
 type Import struct {
@@ -46,4 +47,9 @@ type Function struct {
 	Params []Field
 	Return []Field
 	Code   []string
+}
+
+type Alias struct {
+	Name string
+	Type string
 }
