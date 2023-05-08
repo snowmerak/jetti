@@ -1,11 +1,12 @@
 package generate
 
 import (
-	"github.com/snowmerak/jetti/lib/generator"
-	"github.com/snowmerak/jetti/lib/model"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/snowmerak/jetti/lib/generator"
+	"github.com/snowmerak/jetti/lib/model"
 )
 
 const CONTEXT = `context`
@@ -65,7 +66,7 @@ func MakeContextPackage(root string, module string, elements ...string) error {
 		})
 	}
 
-	methods := make([]model.Method, 4, len(elements)+4)
+	methods := make([]model.Method, 5, len(elements)+5)
 	methods[0] = model.Method{
 		Name: "WithCancel",
 		Return: []model.Field{
@@ -143,6 +144,17 @@ func MakeContextPackage(root string, module string, elements ...string) error {
 			"return $RECEIVER$.ctx.Done()",
 		},
 	}
+	methods[4] = model.Method{
+		Name: "RawContext",
+		Return: []model.Field{
+			{
+				Type: "context.Context",
+			},
+		},
+		Code: []string{
+			"return $RECEIVER$.ctx",
+		},
+	}
 	for _, info := range infos {
 		methods = append(methods, model.Method{
 			Name: "Get" + info.structName,
@@ -166,6 +178,7 @@ func MakeContextPackage(root string, module string, elements ...string) error {
 	}
 	newFuncCodes := make([]string, 0, len(infos)+2)
 	newFuncCodes = append(newFuncCodes, "newCtx := new(Context)")
+	newFuncCodes = append(newFuncCodes, "newCtx.ctx = context.Background()")
 	for _, info := range infos {
 		newFuncCodes = append(newFuncCodes, "newCtx."+info.memberName+" = "+info.memberName)
 	}
