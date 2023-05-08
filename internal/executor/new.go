@@ -1,7 +1,7 @@
 package executor
 
 import (
-	"github.com/snowmerak/jetti/internal/executor/generate"
+	"github.com/snowmerak/jetti/v2/internal/executor/generate"
 	"os"
 	"os/exec"
 	"path/filepath"

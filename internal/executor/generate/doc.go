@@ -1,8 +1,8 @@
 package generate
 
 import (
-	"github.com/snowmerak/jetti/lib/generator"
-	"github.com/snowmerak/jetti/lib/model"
+	"github.com/snowmerak/jetti/v2/lib/generator"
+	"github.com/snowmerak/jetti/v2/lib/model"
 	"os"
 	"path/filepath"
 )

@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"github.com/snowmerak/jetti/lib/model"
+	"github.com/snowmerak/jetti/v2/lib/model"
 	"go/ast"
 	"go/parser"
 	"go/token"

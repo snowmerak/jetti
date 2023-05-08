@@ -2,9 +2,9 @@ package generate
 
 import (
 	"fmt"
-	"github.com/snowmerak/jetti/internal/executor/check"
-	"github.com/snowmerak/jetti/lib/generator"
-	"github.com/snowmerak/jetti/lib/model"
+	"github.com/snowmerak/jetti/v2/internal/executor/check"
+	"github.com/snowmerak/jetti/v2/lib/generator"
+	"github.com/snowmerak/jetti/v2/lib/model"
 	"os"
 	"path/filepath"
 	"strings"

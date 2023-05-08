@@ -3,7 +3,7 @@ package check
 import (
 	"strings"
 
-	"github.com/snowmerak/jetti/lib/model"
+	"github.com/snowmerak/jetti/v2/lib/model"
 )
 
 type Bean struct {

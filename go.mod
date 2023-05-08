@@ -1,4 +1,4 @@
-module github.com/snowmerak/jetti
+module github.com/snowmerak/jetti/v2
 
 go 1.20
 

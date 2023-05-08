@@ -1,9 +1,9 @@
 package executor
 
 import (
-	"github.com/snowmerak/jetti/internal/executor/check"
-	"github.com/snowmerak/jetti/internal/executor/generate"
-	"github.com/snowmerak/jetti/lib/parser"
+	"github.com/snowmerak/jetti/v2/internal/executor/check"
+	"github.com/snowmerak/jetti/v2/internal/executor/generate"
+	"github.com/snowmerak/jetti/v2/lib/parser"
 	"os"
 	"path/filepath"
 )

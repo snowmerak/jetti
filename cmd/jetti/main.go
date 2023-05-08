@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/alecthomas/kong"
-	"github.com/snowmerak/jetti/internal/executor"
-	"github.com/snowmerak/jetti/internal/executor/cli"
+	"github.com/snowmerak/jetti/v2/internal/executor"
+	"github.com/snowmerak/jetti/v2/internal/executor/cli"
 	"os"
 )
 

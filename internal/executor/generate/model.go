@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/snowmerak/jetti/lib/generator"
-	"github.com/snowmerak/jetti/lib/model"
-	"github.com/snowmerak/jetti/lib/strcase"
+	"github.com/snowmerak/jetti/v2/lib/generator"
+	"github.com/snowmerak/jetti/v2/lib/model"
+	"github.com/snowmerak/jetti/v2/lib/strcase"
 	"github.com/twpayne/go-jsonstruct/v2"
 )
 
