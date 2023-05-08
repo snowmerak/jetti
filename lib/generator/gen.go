@@ -2,7 +2,6 @@ package generator
 
 import (
 	"bytes"
-	"fmt"
 	"go/format"
 	"strings"
 
@@ -211,8 +210,6 @@ func GenerateFile(pkg *model.Package) ([]byte, error) {
 		}
 		rs.WriteString("}\n")
 	}
-
-	fmt.Println(rs.String())
 
 	fd, err := format.Source(rs.Bytes())
 	if err != nil {
