@@ -2,14 +2,15 @@ package generate
 
 import (
 	"bytes"
-	"github.com/snowmerak/jetti/lib/generator"
-	"github.com/snowmerak/jetti/lib/model"
-	"github.com/snowmerak/jetti/lib/strcase"
-	"github.com/twpayne/go-jsonstruct/v2"
 	"go/format"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/snowmerak/jetti/lib/generator"
+	"github.com/snowmerak/jetti/lib/model"
+	"github.com/snowmerak/jetti/lib/strcase"
+	"github.com/twpayne/go-jsonstruct/v2"
 )
 
 func ConvertJson(path string) error {
@@ -58,7 +59,7 @@ func ConvertJson(path string) error {
 				},
 				Code: []string{
 					"v := new(" + structName + ")",
-					"if err := json.Unmarshal(data, &v); err != nil {",
+					"if err := json.Unmarshal(data, v); err != nil {",
 					"\treturn nil, err",
 					"}",
 					"return v, nil",
@@ -180,7 +181,7 @@ func ConvertYaml(path string) error {
 	fileName = fileName[:len(fileName)-len(filepath.Ext(fileName))]
 	structName := strcase.SnakeToPascal(fileName)
 
-	gen := jsonstruct.NewGenerator(jsonstruct.WithTypeName(structName))
+	gen := jsonstruct.NewGenerator(jsonstruct.WithTypeName(structName), jsonstruct.WithStructTagName("yaml"))
 
 	if err := gen.ObserveYAMLFile(path); err != nil {
 		return err
@@ -220,7 +221,7 @@ func ConvertYaml(path string) error {
 				},
 				Code: []string{
 					"v := new(" + structName + ")",
-					"if err := yaml.Unmarshal(data, &v); err != nil {",
+					"if err := yaml.Unmarshal(data, v); err != nil {",
 					"\treturn nil, err",
 					"}",
 					"return v, nil",
