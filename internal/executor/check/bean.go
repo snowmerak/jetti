@@ -1,21 +1,34 @@
 package check
 
 import (
-	"path/filepath"
 	"strings"
 
 	"github.com/snowmerak/jetti/lib/model"
 )
 
-func HasBean(path string, pkg *model.Package) ([]string, error) {
-	rs := make([]string, 0)
-	path = filepath.Dir(path)
+type Bean struct {
+	StructName string
+	Aliases    []string
+}
+
+func HasBean(path string, pkg *model.Package) ([]Bean, error) {
+	beans := []Bean(nil)
 
 	for _, st := range pkg.Structs {
 		if strings.Contains(st.Doc, "jetti:bean") {
-			rs = append(rs, path+"/"+st.Name)
+			bean := Bean{
+				StructName: st.Name,
+			}
+			split := strings.Split(st.Doc, "\n")
+			for _, line := range split {
+				if strings.Contains(line, "jetti:bean") {
+					bean.Aliases = append(bean.Aliases, strings.Split(strings.TrimSpace(strings.TrimPrefix(line, "jetti:bean")), " ")...)
+					beans = append(beans, bean)
+					break
+				}
+			}
 		}
 	}
 
-	return rs, nil
+	return beans, nil
 }

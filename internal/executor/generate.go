@@ -13,8 +13,7 @@ func Generate(root string) error {
 	if err != nil {
 		return err
 	}
-
-	beanStructs := make([]string, 0)
+	_ = moduleName
 
 	if err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
@@ -32,7 +31,10 @@ func Generate(root string) error {
 			if err != nil {
 				return err
 			}
-			beanStructs = append(beanStructs, beans...)
+
+			if err := generate.Bean(path, beans); err != nil {
+				return err
+			}
 		case ".json":
 			if err := generate.ConvertJson(path); err != nil {
 				return err
@@ -57,10 +59,6 @@ func Generate(root string) error {
 
 		return nil
 	}); err != nil {
-		return err
-	}
-
-	if err := generate.MakeContextPackage(root, moduleName, beanStructs...); err != nil {
 		return err
 	}
 
