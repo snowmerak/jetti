@@ -6,9 +6,15 @@ import (
 	"github.com/snowmerak/jetti/v2/lib/model"
 )
 
+const (
+	TypeStruct = iota
+	TypeInterface
+)
+
 type Bean struct {
-	StructName string
-	Aliases    []string
+	Type    int
+	Name    string
+	Aliases []string
 }
 
 func HasBean(path string, pkg *model.Package) ([]Bean, error) {
@@ -17,9 +23,27 @@ func HasBean(path string, pkg *model.Package) ([]Bean, error) {
 	for _, st := range pkg.Structs {
 		if strings.Contains(st.Doc, "jetti:bean") {
 			bean := Bean{
-				StructName: st.Name,
+				Type: TypeStruct,
+				Name: st.Name,
 			}
 			split := strings.Split(st.Doc, "\n")
+			for _, line := range split {
+				if strings.Contains(line, "jetti:bean") {
+					bean.Aliases = append(bean.Aliases, strings.Split(strings.TrimSpace(strings.TrimPrefix(line, "jetti:bean")), " ")...)
+					beans = append(beans, bean)
+					break
+				}
+			}
+		}
+	}
+
+	for _, it := range pkg.Interfaces {
+		if strings.Contains(it.Doc, "jetti:bean") {
+			bean := Bean{
+				Type: TypeInterface,
+				Name: it.Name,
+			}
+			split := strings.Split(it.Doc, "\n")
 			for _, line := range split {
 				if strings.Contains(line, "jetti:bean") {
 					bean.Aliases = append(bean.Aliases, strings.Split(strings.TrimSpace(strings.TrimPrefix(line, "jetti:bean")), " ")...)

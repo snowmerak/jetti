@@ -18,6 +18,10 @@ func Bean(path string, beans []check.Bean) error {
 		for _, alias := range bean.Aliases {
 			alias = strings.ToUpper(alias[:1]) + alias[1:]
 			filePath := filepath.Join(dir, strings.ToLower(alias)+".context.go")
+			typ := bean.Name
+			if bean.Type == check.TypeStruct {
+				typ = "*" + typ
+			}
 			pkg := &model.Package{
 				Name: packageName,
 				Imports: []model.Import{
@@ -41,7 +45,7 @@ func Bean(path string, beans []check.Bean) error {
 							},
 							{
 								Name: "v",
-								Type: "*" + bean.StructName,
+								Type: typ,
 							},
 						},
 						Return: []model.Field{
@@ -63,14 +67,14 @@ func Bean(path string, beans []check.Bean) error {
 						},
 						Return: []model.Field{
 							{
-								Type: "*" + bean.StructName,
+								Type: typ,
 							},
 							{
 								Type: "bool",
 							},
 						},
 						Code: []string{
-							fmt.Sprintf("v, ok := ctx.Value(%s(\"%s\")).(*%s)", alias+"ContextKey", alias, bean.StructName),
+							fmt.Sprintf("v, ok := ctx.Value(%s(\"%s\")).(%s)", alias+"ContextKey", alias, typ),
 							"return v, ok",
 						},
 					},
