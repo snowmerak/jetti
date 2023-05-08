@@ -185,3 +185,38 @@ type YamlPrac struct {
 	Version string `yaml:"version"`
 }
 ```
+
+### protobuf/flatbuffers generating
+
+제티는 프로젝트 내부의 프로토버퍼와 플랫버퍼 파일을 찾으면 자동으로 고 코드로 컴파일 하는 커맨드를 실행합니다.
+
+이를 위해 `protoc`와 `flatc`가 필요합니다.
+
+#### protoc/grpc 설치
+
+[여기]("https://grpc.io/docs/languages/go/quickstart/")를 참고해 protoc 및 고 코드 생성을 위한 플러그인을 설치합니다.
+
+#### flatc 설치
+
+[여기]("https://google.github.io/flatbuffers/flatbuffers_guide_building.html")를 참고해 flatc를 설치합니다.
+
+굳이 빌드 하지 않더라도 사용하는 환경의 패키지 매니저를 통해 설치할 수 있습니다.
+
+#### 사용법
+
+`./proto` 디렉토리를 만들고 `./proto/test/test.proto` 파일을 만듭니다.
+
+```proto
+syntax = "proto3";
+
+package test;
+
+option go_package = "./test";
+
+message Test {
+  string name = 1;
+  int32 age = 2;
+}
+```
+
+그리고 `jetti generate`를 실행하면 `./gen/grpc/proto/test/test.pb.go`에 파일을 생성합니다.
