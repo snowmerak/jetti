@@ -8,6 +8,62 @@
 
 ## 기능
 
+### new
+
+`new`는 새로운 프로젝트나 커맨드 패키지를 생성합니다.
+
+#### new module 예시
+
+`jetti new <module-name>`을 실행하면 현재 폴더에서 `go mod <module-name>`을 실행하면서 다음과 같은 기본 폴더들을 만들어줍니다.
+
+```
+➜  tree .
+.
+├── README.md
+├── cmd
+│   └── doc.go
+├── go.mod
+├── internal
+│   └── doc.go
+└── lib
+    └── doc.go
+
+4 directories, 5 files
+```
+
+#### new command 예시
+
+`jetti new --cmd <cmd-name>`을 실행하면 현재 폴더 내의 `cmd` 폴더에 `<cmd-name>` 폴더를 만들고, `main.go` 파일을 만들어줍니다.
+
+다음 예시는 `jetti new --cmd prac`를 실행한 결과입니다.
+
+```
+➜  jetti new --cmd prac
+➜  tree .
+.
+├── README.md
+├── cmd
+│   ├── doc.go
+│   └── prac
+│       └── main.go
+├── go.mod
+├── internal
+│   └── doc.go
+└── lib
+    └── doc.go
+
+5 directories, 6 files
+```
+
+### run
+
+`run`은 `cmd` 내의 커맨드 패키지를 실행하는 역할을 합니다.
+
+`jetti run <cmd-name>`을 실행하면 `cmd/<cmd-name>` 폴더 내의 고 파일들을 실행합니다.
+
+추가로 `jetti run <cmd-name> <args>...`을 실행하여 커맨드 패키지에 인자를 전달할 수 있습니다.  
+사실상 `go run`과 동일합니다.
+
 ### bean
 
 `bean`은 `context.Context`의 `WithValue`를 편리하게 이용할 수 있게 해주는 기능입니다.
