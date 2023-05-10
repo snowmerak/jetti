@@ -7,13 +7,14 @@ type Field struct {
 }
 
 type Package struct {
-	Name       string
-	Imports    []Import
-	Structs    []Struct
-	Interfaces []Interface
-	Functions  []Function
-	Methods    []Method
-	Aliases    []Alias
+	Name            string
+	Imports         []Import
+	Structs         []Struct
+	Interfaces      []Interface
+	Functions       []Function
+	Methods         []Method
+	Aliases         []Alias
+	GlobalVariables []GlobalVariable
 }
 
 type Import struct {
@@ -52,4 +53,10 @@ type Function struct {
 type Alias struct {
 	Name string
 	Type string
+}
+
+type GlobalVariable struct {
+	Name  string
+	Type  string
+	Value string
 }

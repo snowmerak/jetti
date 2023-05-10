@@ -38,6 +38,17 @@ func GenerateFile(pkg *model.Package) ([]byte, error) {
 		rs.WriteString("\n")
 	}
 
+	for _, variable := range pkg.GlobalVariables {
+		rs.WriteString("\nvar ")
+		rs.WriteString(variable.Name)
+		rs.WriteString(" ")
+		rs.WriteString(variable.Type)
+		if variable.Value != "" {
+			rs.WriteString(" = ")
+			rs.WriteString(variable.Value)
+		}
+	}
+
 	for _, st := range pkg.Structs {
 		rs.WriteString("\n")
 		if st.Doc != "" {
