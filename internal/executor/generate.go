@@ -58,6 +58,17 @@ func Generate(root string) error {
 				log.Printf("generate bean: %s", relativePath)
 			}
 
+			optionals, err := check.HasOptionalParameter(pkg)
+			if err != nil {
+				return err
+			}
+
+			if len(optionals) > 0 {
+				if err := generate.OptionalParameter(path, optionals); err != nil {
+					return err
+				}
+				log.Printf("generate optional: %s", relativePath)
+			}
 		case ".json":
 			if err := generate.ConvertJson(path); err != nil {
 				return err
