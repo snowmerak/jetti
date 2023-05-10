@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/alecthomas/kong"
 	"github.com/snowmerak/jetti/v2/internal/executor"
 	"github.com/snowmerak/jetti/v2/internal/executor/cli"
@@ -17,7 +16,6 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(ctx.Command())
 	switch ctx.Command() {
 	case cli.Generate:
 		if err := executor.Generate(pwd); err != nil {
@@ -28,6 +26,10 @@ func main() {
 			panic(err)
 		}
 	case cli.Run:
+		fallthrough
 	case cli.RunArgs:
+		if err := executor.Run(pwd, param.Run.CommandName, param.Run.Args...); err != nil {
+			panic(err)
+		}
 	}
 }
