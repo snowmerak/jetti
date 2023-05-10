@@ -46,15 +46,18 @@ func Generate(root string) error {
 				return err
 			}
 
-			beans, err := check.HasBean(path, pkg)
+			beans, err := check.HasBean(pkg)
 			if err != nil {
 				return err
 			}
 
-			if err := generate.Bean(path, beans); err != nil {
-				return err
+			if len(beans) > 0 {
+				if err := generate.Bean(path, beans); err != nil {
+					return err
+				}
+				log.Printf("generate bean: %s", relativePath)
 			}
-			log.Printf("generate bean: %s", relativePath)
+
 		case ".json":
 			if err := generate.ConvertJson(path); err != nil {
 				return err

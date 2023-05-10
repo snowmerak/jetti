@@ -6,18 +6,13 @@ import (
 	"github.com/snowmerak/jetti/v2/lib/model"
 )
 
-const (
-	TypeStruct = iota
-	TypeInterface
-)
-
 type Bean struct {
 	Type    int
 	Name    string
 	Aliases []string
 }
 
-func HasBean(path string, pkg *model.Package) ([]Bean, error) {
+func HasBean(pkg *model.Package) ([]Bean, error) {
 	beans := []Bean(nil)
 
 	for _, st := range pkg.Structs {
