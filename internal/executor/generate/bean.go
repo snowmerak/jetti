@@ -42,7 +42,7 @@ func Bean(path string, beans []check.Bean) error {
 					{
 						Name:  "err" + alias + "NotFound",
 						Type:  "error",
-						Value: fmt.Sprintf("errors.New(\"%s not found\")", alias),
+						Value: fmt.Sprintf("errors.New(\"%s not found\")", strings.ToLower(alias)),
 					},
 				},
 				Functions: []model.Function{
@@ -80,15 +80,23 @@ func Bean(path string, beans []check.Bean) error {
 								Type: typ,
 							},
 							{
-								Type: "error",
+								Type: "bool",
 							},
 						},
 						Code: []string{
 							fmt.Sprintf("v, ok := ctx.Value(%s(\"%s\")).(%s)", alias+"ContextKey", alias, typ),
-							"if !ok {",
-							fmt.Sprintf("\treturn nil, err%sNotFound", alias),
-							"}",
-							"return v, nil",
+							"return v, ok",
+						},
+					},
+					{
+						Name: "Err" + alias + "NotFound",
+						Return: []model.Field{
+							{
+								Type: "error",
+							},
+						},
+						Code: []string{
+							fmt.Sprintf("return err%sNotFound", alias),
 						},
 					},
 					{
