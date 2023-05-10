@@ -28,11 +28,21 @@ func Bean(path string, beans []check.Bean) error {
 					{
 						Path: "context",
 					},
+					{
+						Path: "errors",
+					},
 				},
 				Aliases: []model.Alias{
 					{
 						Name: alias + "ContextKey",
 						Type: "string",
+					},
+				},
+				GlobalVariables: []model.GlobalVariable{
+					{
+						Name:  "err" + alias + "NotFound",
+						Type:  "error",
+						Value: fmt.Sprintf("errors.New(\"%s not found\")", alias),
 					},
 				},
 				Functions: []model.Function{
@@ -70,12 +80,32 @@ func Bean(path string, beans []check.Bean) error {
 								Type: typ,
 							},
 							{
-								Type: "bool",
+								Type: "error",
 							},
 						},
 						Code: []string{
 							fmt.Sprintf("v, ok := ctx.Value(%s(\"%s\")).(%s)", alias+"ContextKey", alias, typ),
-							"return v, ok",
+							"if !ok {",
+							fmt.Sprintf("\treturn nil, err%sNotFound", alias),
+							"}",
+							"return v, nil",
+						},
+					},
+					{
+						Name: "Is" + alias + "NotFoundErr",
+						Params: []model.Field{
+							{
+								Name: "err",
+								Type: "error",
+							},
+						},
+						Return: []model.Field{
+							{
+								Type: "bool",
+							},
+						},
+						Code: []string{
+							fmt.Sprintf("return errors.Is(err, err%sNotFound)", alias),
 						},
 					},
 				},
