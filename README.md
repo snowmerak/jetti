@@ -123,6 +123,44 @@ func GetRedis(ctx context.Context) (*Config, bool) {
 
 이제 단일 컨텍스트를 생성한 후, `Push` 메서드를 통해 빈을 등록하고, `Get` 메서드를 통해 빈을 가져올 수 있습니다.
 
+### optional parameter
+
+`optional parameter`는 `jetti:optional` 주석을 통해 생성할 수 있습니다.
+
+옵셔널 패러미터는 기존의 프리미티브 타입, 혹은 구조체에 기본값과 값 변경을 위한 함수를 받아 기본값을 변형하여 새로운 패러미터를 반환합니다.
+
+#### 예시
+
+`./lib/person` 폴더를 만들고 `person.go` 파일을 만들어 다음과 같이 작성합니다.
+
+```go
+package person
+
+// jetti:optional
+type Person struct {
+	Name string
+	Age  int
+}
+```
+
+`jetti generate`를 실행하면 `./lib/person.optional.go` 파일이 생성됩니다.
+
+```go
+package person
+
+type PersonOptional func(*Person) *Person
+
+func ApplyPerson(defaultValue Person, fn ...PersonOptional) *Person {
+	param := &defaultValue
+	for _, f := range fn {
+		param = f(param)
+	}
+	return param
+}
+```
+
+`ApplyPerson` 함수에 기본값과 변형 함수를 전달하여 새로운 `Person` 구조체를 생성합니다.
+
 ### json/yaml to go
 
 `go-jsonstruct` 라이브러리를 이용해서 json/yaml 파일을 go 구조체로 변환할 수 있습니다.
