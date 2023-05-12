@@ -18,6 +18,7 @@ func ParseFile(path string) (*model.Package, error) {
 	structs := []model.Struct(nil)
 	interfaces := []model.Interface(nil)
 	imports := []model.Import(nil)
+	functions := []model.Function(nil)
 	ast.Inspect(f, func(n ast.Node) bool {
 		if n == nil {
 			return true
@@ -33,6 +34,54 @@ func ParseFile(path string) (*model.Package, error) {
 				imp.Alias = x.Name.Name
 			}
 			imports = append(imports, imp)
+		case *ast.FuncDecl:
+			fun := model.Function{
+				Name: x.Name.Name,
+			}
+			if x.Doc != nil {
+				fun.Doc = x.Doc.Text()
+			}
+			if x.Recv != nil {
+				switch v := x.Recv.List[0].Type.(type) {
+				case *ast.StarExpr:
+					fun.Receiver = v.X.(*ast.Ident).Name
+				case *ast.Ident:
+					fun.Receiver = v.Name
+				}
+			}
+			if x.Type != nil {
+				if x.Type.Params != nil {
+					for _, param := range x.Type.Params.List {
+						typ, ok := param.Type.(*ast.Ident)
+						if !ok {
+							continue
+						}
+						f := model.Field{
+							Type: typ.Name,
+						}
+						if len(param.Names) > 0 {
+							f.Name = param.Names[0].Name
+						}
+						fun.Params = append(fun.Params, f)
+					}
+				}
+				if x.Type.Results != nil {
+					for _, result := range x.Type.Results.List {
+						typ, ok := result.Type.(*ast.Ident)
+						if !ok {
+							continue
+						}
+						f := model.Field{
+							Type: typ.Name,
+						}
+						if len(result.Names) > 0 {
+							f.Name = result.Names[0].Name
+						}
+						fun.Return = append(fun.Return, f)
+					}
+				}
+			}
+			functions = append(functions, fun)
 		case *ast.GenDecl:
 			doc := x.Doc.Text()
 			for _, spec := range x.Specs {
@@ -117,5 +166,6 @@ func ParseFile(path string) (*model.Package, error) {
 		Structs:    structs,
 		Interfaces: interfaces,
 		Imports:    imports,
+		Functions:  functions,
 	}, nil
 }
