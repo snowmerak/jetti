@@ -314,3 +314,148 @@ message Test {
 ```
 
 그리고 `jetti generate`를 실행하면 `./gen/grpc/proto/test/test.pb.go`에 파일을 생성합니다.
+
+### object pool
+
+제티는 `sync.Pool`과 `chan T`을 사용한 두가지 풀을 만들 수 있습니다.
+
+#### sync pool
+
+`jetti:pool`을 주석에 작성함으로 풀을 생성할 수 있습니다.
+
+두 가지 풀 중, sync.Pool은 `jetti:pool sync:<alias>`로 생성할 수 있습니다.
+
+`<alias>`는 풀의 이름을 지정합니다.
+
+```go
+// jetti:pool sync:people
+type Person struct {
+    Name string
+    Age  int
+}
+```
+
+위와 같이 주석을 작성하면 `sync.Pool`을 이용한 `people` 풀이 생성됩니다.
+
+```go
+package person
+
+import "sync"
+import "errors"
+import "runtime"
+
+var errPeopleCannotGet error = errors.New("cannot get people")
+
+type PeoplePool struct {
+	pool *sync.Pool
+}
+
+func (p *PeoplePool) Get() (*Person, error) {
+	v := p.pool.Get()
+	if v == nil {
+		return nil, errPeopleCannotGet
+	}
+	return v.(*Person), nil
+}
+
+func (p *PeoplePool) GetWithFinalizer() (*Person, error) {
+	v := p.pool.Get()
+	if v == nil {
+		return nil, errPeopleCannotGet
+	}
+	runtime.SetFinalizer(v, func(v interface{}) {
+		p.pool.Put(v)
+	})
+	return v.(*Person), nil
+}
+
+func (p *PeoplePool) Put(v *Person) {
+	p.pool.Put(v)
+}
+
+func NewPeoplePool() PeoplePool {
+	return PeoplePool{
+		pool: &sync.Pool{
+			New: func() interface{} {
+				return new(Person)
+			},
+		},
+	}
+}
+
+func IsPeopleCannotGetErr(err error) bool {
+	return errors.Is(err, errPeopleCannotGet)
+}
+```
+
+#### chan pool
+
+채널을 사용한 풀은 `jetti:pool chan:<alias>`로 생성할 수 있습니다.
+
+이 풀의 경우엔, 최대 풀링 가능한 오브젝트 수를 제한할 때 유용하게 사용할 수 있습니다.
+
+```go
+// jetti:pool sync:people chan:candidate
+type Person struct {
+	Name string
+	Age  int
+}
+```
+
+방금 예제에서 `sync:people` 뒤에 `chan:candidate`를 추가해서 생성하면, 추가적으로 다음 파일도 생성됩니다.
+
+```go
+package person
+
+import (
+	"runtime"
+	"time"
+)
+
+type CandidatePool struct {
+	pool    chan *Person
+	timeout time.Duration
+}
+
+func (c *CandidatePool) Get() *Person {
+	after := time.After(c.timeout)
+	select {
+	case v := <-c.pool:
+		return v
+	case <-after:
+		return new(Person)
+	}
+}
+
+func (c *CandidatePool) GetWithFinalizer() *Person {
+	after := time.After(c.timeout)
+	resp := (*Person)(nil)
+	select {
+	case v := <-c.pool:
+		resp = v
+	case <-after:
+		resp = new(Person)
+	}
+	runtime.SetFinalizer(resp, func(v interface{}) {
+		c.pool <- v.(*Person)
+	})
+	return resp
+}
+
+func (c *CandidatePool) Put(v *Person) {
+	select {
+	case c.pool <- v:
+	default:
+	}
+}
+
+func NewCandidatePool(size int, timeout time.Duration) CandidatePool {
+	pool := make(chan *Person, size)
+	return CandidatePool{
+		pool:    pool,
+		timeout: timeout,
+	}
+}
+```
+
+sync pool과 다른 점으로 전체 채널 길이와 채널에서 값을 가져올 시간의 제한을 지정합니다.
