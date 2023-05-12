@@ -44,10 +44,12 @@ type Interface struct {
 }
 
 type Function struct {
-	Name   string
-	Params []Field
-	Return []Field
-	Code   []string
+	Doc      string
+	Name     string
+	Receiver string
+	Params   []Field
+	Return   []Field
+	Code     []string
 }
 
 type Alias struct {
