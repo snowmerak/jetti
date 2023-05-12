@@ -69,6 +69,18 @@ func Generate(root string) error {
 				}
 				log.Printf("generate optional: %s", relativePath)
 			}
+
+			pools, err := check.HasPool(pkg)
+			if err != nil {
+				return err
+			}
+
+			if len(pools) > 0 {
+				if err := generate.Pool(path, pools); err != nil {
+					return err
+				}
+				log.Printf("generate pool: %s", relativePath)
+			}
 		case ".json":
 			if err := generate.ConvertJson(path); err != nil {
 				return err
