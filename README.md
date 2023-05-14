@@ -10,7 +10,7 @@
 
 `new`는 새로운 프로젝트나 커맨드 패키지를 생성합니다.
 
-### new module 예시
+### new module
 
 `jetti new <module-name>`을 실행하면 현재 폴더에서 `go mod <module-name>`을 실행하면서 다음과 같은 기본 폴더들을 만들어줍니다.
 
@@ -29,7 +29,7 @@
 4 directories, 5 files
 ```
 
-### new command 예시
+### new command
 
 `jetti new --cmd <cmd-name>`을 실행하면 현재 폴더 내의 `cmd` 폴더에 `<cmd-name>` 폴더를 만들고, `main.go` 파일을 만들어줍니다.
 
@@ -51,6 +51,21 @@
     └── doc.go
 
 5 directories, 6 files
+```
+
+### new proto
+
+`jetti new --proto <path/name>`을 실행하면 현재 폴더 내의 `<path>` 폴더를 만들고, `<name>.proto` 파일을 만듭니다.
+
+다음 예시는 `jetti new --proto model/proto/person`를 실행한 결과입니다.
+
+```protobuf
+syntax = "proto3";
+
+package person;
+
+option go_package = "model/proto/person";
+
 ```
 
 ## run
