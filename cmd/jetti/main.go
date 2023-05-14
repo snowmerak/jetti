@@ -22,7 +22,14 @@ func main() {
 			panic(err)
 		}
 	case cli.New:
-		if err := executor.New(pwd, param.New.ModuleName, param.New.Cmd); err != nil {
+		kind := executor.NewKindModule
+		if param.New.Cmd {
+			kind = executor.NewKindCmd
+		}
+		if param.New.Proto {
+			kind = executor.NewKindProto
+		}
+		if err := executor.New(pwd, param.New.ModuleName, kind); err != nil {
 			panic(err)
 		}
 	case cli.Run:
