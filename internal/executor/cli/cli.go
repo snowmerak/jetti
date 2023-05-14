@@ -5,6 +5,7 @@ const (
 	New      = "new <module-name>"
 	Run      = "run <command-name>"
 	RunArgs  = "run <command-name> <args>"
+	Show     = "show"
 )
 
 type CLI struct {
@@ -18,4 +19,7 @@ type CLI struct {
 		CommandName string   `arg:"" help:"Command name"`
 		Args        []string `arg:"" optional:"" help:"Command arguments"`
 	} `cmd:"" help:"Run a command"`
+	Show struct {
+		Imports bool `cmd:"" help:"Show import cycle"`
+	} `cmd:"" help:"Show information"`
 }
