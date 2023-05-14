@@ -31,5 +31,11 @@ func main() {
 		if err := executor.Run(pwd, param.Run.CommandName, param.Run.Args...); err != nil {
 			panic(err)
 		}
+	case cli.Show:
+		if param.Show.Imports {
+			if err := executor.ShowImports(pwd); err != nil {
+				panic(err)
+			}
+		}
 	}
 }
