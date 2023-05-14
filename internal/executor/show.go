@@ -51,10 +51,11 @@ func ShowImports(root string) error {
 	}
 
 	buffer := bytes.NewBuffer(nil)
+	buffer.WriteString("direction: right\n")
 	for _, link := range links {
 		for _, from := range link.From {
 			buffer.WriteString(from)
-			buffer.WriteString(" -> \"")
+			buffer.WriteString(" --> \"")
 			buffer.WriteString(link.To)
 			buffer.WriteString("\"\n")
 		}
@@ -71,8 +72,11 @@ func ShowImports(root string) error {
 	})
 
 	out, _ := d2svg.Render(diagram, &d2svg.RenderOpts{
-		Pad:     d2svg.DEFAULT_PADDING,
-		ThemeID: d2themescatalog.GrapeSoda.ID,
+		Center:        true,
+		SetDimensions: true,
+		Sketch:        true,
+		Pad:           300,
+		ThemeID:       d2themescatalog.GrapeSoda.ID,
 	})
 
 	f, err := os.Create("imports.svg")
