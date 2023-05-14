@@ -6,6 +6,14 @@
 
 [WIP]
 
+## install
+
+다음 명령어를 실행하면 `$HOME/go/bin`에 `jetti` 바이너리가 설치됩니다.
+
+`latest`로 버전을 특정하면 항상 최신 버전을 설치합니다.
+
+`go install github.com/snowmerak/jetti/v2/cmd/jetti@latest`
+
 ## new
 
 `new`는 새로운 프로젝트나 커맨드 패키지를 생성합니다.
