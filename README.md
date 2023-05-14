@@ -6,13 +6,11 @@
 
 [WIP]
 
-## 기능
-
-### new
+## new
 
 `new`는 새로운 프로젝트나 커맨드 패키지를 생성합니다.
 
-#### new module 예시
+### new module 예시
 
 `jetti new <module-name>`을 실행하면 현재 폴더에서 `go mod <module-name>`을 실행하면서 다음과 같은 기본 폴더들을 만들어줍니다.
 
@@ -31,7 +29,7 @@
 4 directories, 5 files
 ```
 
-#### new command 예시
+### new command 예시
 
 `jetti new --cmd <cmd-name>`을 실행하면 현재 폴더 내의 `cmd` 폴더에 `<cmd-name>` 폴더를 만들고, `main.go` 파일을 만들어줍니다.
 
@@ -55,7 +53,7 @@
 5 directories, 6 files
 ```
 
-### run
+## run
 
 `run`은 `cmd` 내의 커맨드 패키지를 실행하는 역할을 합니다.
 
@@ -64,13 +62,13 @@
 추가로 `jetti run <cmd-name> <args>...`을 실행하여 커맨드 패키지에 인자를 전달할 수 있습니다.  
 사실상 `go run`과 동일합니다.
 
-### bean
+## bean
 
 `bean`은 `context.Context`의 `WithValue`를 편리하게 이용할 수 있게 해주는 기능입니다.
 
 빈의 핵심은 동등, 혹은 하위 문맥에서 동일한 객체 인스턴스를 공유하는 것입니다.
 
-#### 예시
+### 예시
 
 `./lib/config` 폴더를 만들고 `config.go` 파일을 만들어 다음과 같이 작성합니다.
 
@@ -123,13 +121,13 @@ func GetRedis(ctx context.Context) (*Config, bool) {
 
 이제 단일 컨텍스트를 생성한 후, `Push` 메서드를 통해 빈을 등록하고, `Get` 메서드를 통해 빈을 가져올 수 있습니다.
 
-### optional parameter
+## optional parameter
 
 `optional parameter`는 `jetti:optional` 주석을 통해 생성할 수 있습니다.
 
 옵셔널 패러미터는 기존의 프리미티브 타입, 혹은 구조체에 기본값과 값 변경을 위한 함수를 받아 기본값을 변형하여 새로운 패러미터를 반환합니다.
 
-#### 예시
+### 예시
 
 `./lib/person` 폴더를 만들고 `person.go` 파일을 만들어 다음과 같이 작성합니다.
 
@@ -161,13 +159,13 @@ func ApplyPerson(defaultValue Person, fn ...PersonOptional) *Person {
 
 `ApplyPerson` 함수에 기본값과 변형 함수를 전달하여 새로운 `Person` 구조체를 생성합니다.
 
-### json/yaml to go
+## json/yaml to go
 
 `go-jsonstruct` 라이브러리를 이용해서 json/yaml 파일을 go 구조체로 변환할 수 있습니다.
 
 파싱에는 각각 `goccy/go-json`과 `goccy/go-yaml` 라이브러리를 사용합니다.
 
-#### 예시
+### 예시
 
 `./config/json_prac.json`과 `./config/yaml_prac.yaml` 파일을 만들고 다음과 같이 작성합니다.
 
@@ -280,23 +278,23 @@ type YamlPrac struct {
 }
 ```
 
-### protobuf/flatbuffers generating
+## protobuf/flatbuffers generating
 
 제티는 프로젝트 내부의 프로토버퍼와 플랫버퍼 파일을 찾으면 자동으로 고 코드로 컴파일 하는 커맨드를 실행합니다.
 
 이를 위해 `protoc`와 `flatc`가 필요합니다.
 
-#### protoc/grpc 설치
+### protoc/grpc 설치
 
 [여기]("https://grpc.io/docs/languages/go/quickstart/")를 참고해 protoc 및 고 코드 생성을 위한 플러그인을 설치합니다.
 
-#### flatc 설치
+### flatc 설치
 
 [여기]("https://google.github.io/flatbuffers/flatbuffers_guide_building.html")를 참고해 flatc를 설치합니다.
 
 굳이 빌드 하지 않더라도 사용하는 환경의 패키지 매니저를 통해 설치할 수 있습니다.
 
-#### 사용법
+### 사용법
 
 `./proto` 디렉토리를 만들고 `./proto/test/test.proto` 파일을 만듭니다.
 
@@ -315,11 +313,11 @@ message Test {
 
 그리고 `jetti generate`를 실행하면 `./gen/grpc/proto/test/test.pb.go`에 파일을 생성합니다.
 
-### object pool
+## object pool
 
 제티는 `sync.Pool`과 `chan T`을 사용한 두가지 풀을 만들 수 있습니다.
 
-#### sync pool
+### sync pool
 
 `jetti:pool`을 주석에 작성함으로 풀을 생성할 수 있습니다.
 
@@ -388,7 +386,7 @@ func IsPeopleCannotGetErr(err error) bool {
 }
 ```
 
-#### chan pool
+### chan pool
 
 채널을 사용한 풀은 `jetti:pool chan:<alias>`로 생성할 수 있습니다.
 
@@ -459,3 +457,11 @@ func NewCandidatePool(size int, timeout time.Duration) CandidatePool {
 ```
 
 sync pool과 다른 점으로 전체 채널 길이와 채널에서 값을 가져올 시간의 제한을 지정합니다.
+
+## show
+
+### imports
+
+프로젝트 루트 폴더에서 `jetti show --imports`을 실행함으로 프로젝트 내부에서 각 패키지들이 의존하는 관계를 그래프로 그려줍니다.
+
+그려진 그래프는 루트 폴더 내의 `imports.svg` 파일로 저장됩니다.
