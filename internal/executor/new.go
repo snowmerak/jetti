@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"fmt"
 	"github.com/snowmerak/jetti/v2/internal/executor/generate"
 	"os"
 	"os/exec"
@@ -16,9 +17,23 @@ func main() {
 }
 `
 
-func New(root string, moduleName string, isCmd bool) error {
-	switch isCmd {
-	case true:
+const protoScaffold = `syntax = "proto3";
+
+package %s;
+
+option go_package = "%s";
+
+`
+
+const (
+	NewKindModule = iota
+	NewKindCmd
+	NewKindProto
+)
+
+func New(root string, moduleName string, kind int) error {
+	switch kind {
+	case NewKindCmd:
 		if err := os.MkdirAll(filepath.Join(root, "cmd", moduleName), os.ModePerm); err != nil {
 			return err
 		}
@@ -31,7 +46,7 @@ func New(root string, moduleName string, isCmd bool) error {
 		if _, err := f.WriteString(commandScaffold); err != nil {
 			return err
 		}
-	case false:
+	case NewKindModule:
 		cmd := exec.Command("go", "mod", "init", moduleName)
 		cmd.Dir = root
 		cmd.Stdin = os.Stdin
@@ -50,6 +65,22 @@ func New(root string, moduleName string, isCmd bool) error {
 		}
 
 		if err := generate.MakeReadme(root, moduleName); err != nil {
+			return err
+		}
+	case NewKindProto:
+		path := filepath.Join(filepath.ToSlash(root), filepath.ToSlash(moduleName))
+		dir := filepath.Dir(path)
+		base := filepath.Base(path)
+		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			return err
+		}
+
+		f, err := os.Create(path + ".proto")
+		if err != nil {
+			return err
+		}
+
+		if _, err := f.WriteString(fmt.Sprintf(protoScaffold, base, moduleName)); err != nil {
 			return err
 		}
 	}

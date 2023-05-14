@@ -14,6 +14,7 @@ type CLI struct {
 	New struct {
 		ModuleName string `arg:"" help:"Module name"`
 		Cmd        bool   `cmd:"" help:"Create a new command"`
+		Proto      bool   `cmd:"" help:"Create a new proto"`
 	} `cmd:"" help:"Create a new project"`
 	Run struct {
 		CommandName string   `arg:"" help:"Command name"`
