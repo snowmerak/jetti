@@ -13,7 +13,7 @@ func HasOptionalParameter(pkg *model.Package) ([]OptionalParameter, error) {
 	params := []OptionalParameter(nil)
 
 	for _, st := range pkg.Structs {
-		if strings.Contains(st.Doc, "jetti:optional") {
+		if strings.Contains(st.Doc, "jetti:parameter") {
 			param := OptionalParameter{
 				Name: st.Name,
 			}
@@ -22,7 +22,7 @@ func HasOptionalParameter(pkg *model.Package) ([]OptionalParameter, error) {
 	}
 
 	for _, it := range pkg.Interfaces {
-		if strings.Contains(it.Doc, "jetti:optional") {
+		if strings.Contains(it.Doc, "jetti:parameter") {
 			param := OptionalParameter{
 				Name: it.Name,
 			}

@@ -15,7 +15,7 @@ func OptionalParameter(path string, opts []check.OptionalParameter) error {
 
 	for _, opt := range opts {
 		err := func() error {
-			f, err := os.Create(filepath.Join(dir, strings.ToLower(opt.Name)+".optional.go"))
+			f, err := os.Create(filepath.Join(dir, strings.ToLower(opt.Name)+".parameter.go"))
 			if err != nil {
 				return err
 			}

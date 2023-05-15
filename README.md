@@ -146,7 +146,7 @@ func GetRedis(ctx context.Context) (*Config, bool) {
 
 ## optional parameter
 
-`optional parameter`는 `jetti:optional` 주석을 통해 생성할 수 있습니다.
+`optional parameter`는 `jetti:parameter` 주석을 통해 생성할 수 있습니다.
 
 옵셔널 패러미터는 기존의 프리미티브 타입, 혹은 구조체에 기본값과 값 변경을 위한 함수를 받아 기본값을 변형하여 새로운 패러미터를 반환합니다.
 
@@ -157,14 +157,14 @@ func GetRedis(ctx context.Context) (*Config, bool) {
 ```go
 package person
 
-// jetti:optional
+// jetti:parameter
 type Person struct {
 	Name string
 	Age  int
 }
 ```
 
-`jetti generate`를 실행하면 `./lib/person.optional.go` 파일이 생성됩니다.
+`jetti generate`를 실행하면 `./lib/person.parameter.go` 파일이 생성됩니다.
 
 ```go
 package person
