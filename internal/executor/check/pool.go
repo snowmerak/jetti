@@ -75,5 +75,35 @@ func HasPool(pkg *model.Package) ([]Pool, error) {
 		}
 	}
 
+	for _, ali := range pkg.Aliases {
+		if strings.Contains(ali.Doc, "jetti:pool") {
+			split := strings.Split(ali.Doc, "\n")
+			for _, s := range split {
+				if strings.Contains(s, "jetti:pool") {
+					list := strings.Split(strings.TrimPrefix(s, "jetti:pool"), " ")
+					for _, p := range list {
+						if p == "" {
+							continue
+						}
+						sp := strings.Split(p, ":")
+						if len(sp) < 2 {
+							continue
+						}
+						pk := SyncPool
+						if sp[0] == "chan" {
+							pk = ChannelPool
+						}
+						ps = append(ps, Pool{
+							Type:     TypeAlias,
+							Alias:    sp[1],
+							TypeName: ali.Name,
+							PoolKind: pk,
+						})
+					}
+				}
+			}
+		}
+	}
+
 	return ps, nil
 }
