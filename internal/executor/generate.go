@@ -58,16 +58,16 @@ func Generate(root string) error {
 				log.Printf("generate bean: %s", relativePath)
 			}
 
-			optionals, err := check.HasOptionalParameter(pkg)
+			parameters, err := check.HasOptionalParameter(pkg)
 			if err != nil {
 				return err
 			}
 
-			if len(optionals) > 0 {
-				if err := generate.OptionalParameter(path, optionals); err != nil {
+			if len(parameters) > 0 {
+				if err := generate.OptionalParameter(path, parameters); err != nil {
 					return err
 				}
-				log.Printf("generate optional: %s", relativePath)
+				log.Printf("generate parameter: %s", relativePath)
 			}
 
 			pools, err := check.HasPool(pkg)
@@ -80,6 +80,18 @@ func Generate(root string) error {
 					return err
 				}
 				log.Printf("generate pool: %s", relativePath)
+			}
+
+			optionals, err := check.HasOptional(pkg)
+			if err != nil {
+				return err
+			}
+
+			if len(optionals) > 0 {
+				if err := generate.Option(path, optionals); err != nil {
+					return err
+				}
+				log.Printf("generate optional: %s", relativePath)
 			}
 		case ".json":
 			if err := generate.ConvertJson(path); err != nil {
