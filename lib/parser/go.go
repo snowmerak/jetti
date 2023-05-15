@@ -228,5 +228,6 @@ func ParseFile(path string) (*model.Package, error) {
 		Interfaces: interfaces,
 		Imports:    imports,
 		Functions:  functions,
+		Aliases:    aliases,
 	}, nil
 }
