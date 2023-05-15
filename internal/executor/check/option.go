@@ -10,7 +10,7 @@ func HasOptional(pkg *model.Package) ([]string, error) {
 
 	for _, st := range pkg.Structs {
 		if strings.Contains(st.Doc, "jetti:optional") {
-			optional = append(optional, st.Name)
+			optional = append(optional, "*"+st.Name)
 		}
 	}
 
@@ -22,7 +22,7 @@ func HasOptional(pkg *model.Package) ([]string, error) {
 
 	for _, ali := range pkg.Aliases {
 		if strings.Contains(ali.Doc, "jetti:optional") {
-			optional = append(optional, ali.Name)
+			optional = append(optional, "*"+ali.Name)
 		}
 	}
 
