@@ -6,6 +6,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"strings"
 )
 
 func ParseFile(path string) (*model.Package, error) {
@@ -181,6 +182,39 @@ func ParseFile(path string) (*model.Package, error) {
 							Type: p.Type.(*ast.Ident).Name,
 						}
 						aliases = append(aliases, ali)
+					case *ast.FuncType:
+						params := []string(nil)
+						if e.Params != nil {
+							for _, param := range e.Params.List {
+								typ := ""
+								switch param.Type.(type) {
+								case *ast.Ident:
+									typ = param.Type.(*ast.Ident).Name
+								case *ast.StarExpr:
+									typ = "*" + param.Type.(*ast.StarExpr).X.(*ast.Ident).Name
+								}
+								params = append(params, typ)
+							}
+						}
+						returns := []string(nil)
+						if e.Results != nil {
+							for _, result := range e.Results.List {
+								typ := ""
+								switch result.Type.(type) {
+								case *ast.Ident:
+									typ = result.Type.(*ast.Ident).Name
+								case *ast.StarExpr:
+									typ = "*" + result.Type.(*ast.StarExpr).X.(*ast.Ident).Name
+								}
+								returns = append(returns, typ)
+							}
+						}
+						fun := model.Alias{
+							Doc:  doc,
+							Name: p.Name.Name,
+							Type: fmt.Sprintf("func(%s) (%s)", strings.Join(params, ", "), strings.Join(returns, ", ")),
+						}
+						aliases = append(aliases, fun)
 					}
 				}
 			}
