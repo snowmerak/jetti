@@ -481,6 +481,121 @@ func NewCandidatePool(size int, timeout time.Duration) CandidatePool {
 
 sync pool과 다른 점으로 전체 채널 길이와 채널에서 값을 가져올 시간의 제한을 지정합니다.
 
+## optional
+
+`jetti:optional`을 사용하여 해당 타입의 옵셔널 타입을 만들 수 있습니다.
+
+```go
+package person
+
+// jetti:optional
+type Person struct {
+	Name string
+	Age  int
+}
+
+// jetti:optional
+type People [100]Person
+```
+
+예시에서는 `person` 패키지와 이름이 같은 `Person`과 `Person` 타입의 배열인 `People`을 옵셔널 타입으로 만들었습니다.
+
+```go
+package person
+
+type OptionalPeople struct {
+	value *People
+	valid bool
+}
+
+func (o *OptionalPeople) Unwrap() *People {
+	if !o.valid {
+		panic("unwrap a none value")
+	}
+	return o.value
+}
+
+func (o *OptionalPeople) IsSome() bool {
+	return o.valid
+}
+
+func (o *OptionalPeople) IsNone() bool {
+	return !o.valid
+}
+
+func (o *OptionalPeople) UnwrapOr(defaultValue *People) *People {
+	if !o.valid {
+		return defaultValue
+	}
+	return o.value
+}
+
+func SomePeople(value *People) OptionalPeople {
+	return OptionalPeople{
+		value: value,
+		valid: true,
+	}
+}
+
+func NonePeople() OptionalPeople {
+	return OptionalPeople{
+		valid: false,
+	}
+}
+```
+
+먼저 `People`은 위와같이 `OptionalPeople` 타입으로 감싸집니다.
+
+그리고 `SomePeople`과 `NonePeople` 함수를 통해 생성할 수 있으며, `Unwrap`과 `UnwrapOr` 함수를 통해 값을 꺼낼 수 있습니다.
+
+주의할 점은 `Unwrap`은 패닉을 발생할 수 있기에 `IsSome`을 통해 값이 있는지 확인하고 사용해야 합니다.
+
+```go
+package person
+
+type OptionalPerson struct {
+	value *Person
+	valid bool
+}
+
+func (o *OptionalPerson) Unwrap() *Person {
+	if !o.valid {
+		panic("unwrap a none value")
+	}
+	return o.value
+}
+
+func (o *OptionalPerson) IsSome() bool {
+	return o.valid
+}
+
+func (o *OptionalPerson) IsNone() bool {
+	return !o.valid
+}
+
+func (o *OptionalPerson) UnwrapOr(defaultValue *Person) *Person {
+	if !o.valid {
+		return defaultValue
+	}
+	return o.value
+}
+
+func Some(value *Person) OptionalPerson {
+	return OptionalPerson{
+		value: value,
+		valid: true,
+	}
+}
+
+func None() OptionalPerson {
+	return OptionalPerson{
+		valid: false,
+	}
+}
+```
+
+`Person` 타입의 경우엔 `OptionalPerson` 타입으로 감싸지만, 패키지와 이름이 같기 떄문에 `Some`과 `None` 함수를 통해 생성할 수 있습니다.
+
 ## show
 
 ### imports
