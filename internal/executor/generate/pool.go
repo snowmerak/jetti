@@ -19,7 +19,10 @@ func Pool(path string, pools []check.Pool) error {
 		filePath := filepath.Join(dir, lowerAlias+".pool.go")
 
 		typ := pool.TypeName
-		if pool.Type == check.TypeStruct {
+		switch pool.Type {
+		case check.TypeStruct:
+			fallthrough
+		case check.TypeAlias:
 			typ = "*" + pool.TypeName
 		}
 		pkg := (*model.Package)(nil)
