@@ -19,8 +19,11 @@ func Bean(path string, beans []check.Bean) error {
 			alias = strings.ToUpper(alias[:1]) + alias[1:]
 			filePath := filepath.Join(dir, strings.ToLower(alias)+".context.go")
 			typ := bean.Name
-			if bean.Type == check.TypeStruct {
-				typ = "*" + typ
+			switch bean.Type {
+			case check.TypeStruct:
+				fallthrough
+			case check.TypeAlias:
+				typ = "*" + bean.Name
 			}
 			pkg := &model.Package{
 				Name: packageName,

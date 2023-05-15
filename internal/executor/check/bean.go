@@ -49,5 +49,39 @@ func HasBean(pkg *model.Package) ([]Bean, error) {
 		}
 	}
 
+	for _, fn := range pkg.Functions {
+		if strings.Contains(fn.Doc, "jetti:bean") {
+			bean := Bean{
+				Type: TypeFunction,
+				Name: fn.Name,
+			}
+			split := strings.Split(fn.Doc, "\n")
+			for _, line := range split {
+				if strings.Contains(line, "jetti:bean") {
+					bean.Aliases = append(bean.Aliases, strings.Split(strings.TrimSpace(strings.TrimPrefix(line, "jetti:bean")), " ")...)
+					beans = append(beans, bean)
+					break
+				}
+			}
+		}
+	}
+
+	for _, ali := range pkg.Aliases {
+		if strings.Contains(ali.Doc, "jetti:bean") {
+			bean := Bean{
+				Type: TypeAlias,
+				Name: ali.Name,
+			}
+			split := strings.Split(ali.Doc, "\n")
+			for _, line := range split {
+				if strings.Contains(line, "jetti:bean") {
+					bean.Aliases = append(bean.Aliases, strings.Split(strings.TrimSpace(strings.TrimPrefix(line, "jetti:bean")), " ")...)
+					beans = append(beans, bean)
+					break
+				}
+			}
+		}
+	}
+
 	return beans, nil
 }

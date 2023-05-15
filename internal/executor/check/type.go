@@ -4,6 +4,7 @@ const (
 	TypeStruct = iota
 	TypeInterface
 	TypeAlias
+	TypeFunction
 )
 
 const (
