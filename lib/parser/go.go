@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"github.com/snowmerak/jetti/v2/lib/model"
 	"go/ast"
 	"go/parser"
@@ -19,6 +20,7 @@ func ParseFile(path string) (*model.Package, error) {
 	interfaces := []model.Interface(nil)
 	imports := []model.Import(nil)
 	functions := []model.Function(nil)
+	aliases := []model.Alias(nil)
 	ast.Inspect(f, func(n ast.Node) bool {
 		if n == nil {
 			return true
@@ -154,6 +156,31 @@ func ParseFile(path string) (*model.Package, error) {
 							it.Methods = append(it.Methods, m)
 						}
 						interfaces = append(interfaces, it)
+					case *ast.ArrayType:
+						length := ""
+						if p.Type.(*ast.ArrayType).Len != nil {
+							length = p.Type.(*ast.ArrayType).Len.(*ast.BasicLit).Value
+						}
+						arr := model.Alias{
+							Doc:  doc,
+							Name: p.Name.Name,
+							Type: fmt.Sprintf("[%s]%s", length, p.Type.(*ast.ArrayType).Elt.(*ast.Ident).Name),
+						}
+						aliases = append(aliases, arr)
+					case *ast.MapType:
+						m := model.Alias{
+							Doc:  doc,
+							Name: p.Name.Name,
+							Type: fmt.Sprintf("map[%s]%s", p.Type.(*ast.MapType).Key.(*ast.Ident).Name, p.Type.(*ast.MapType).Value.(*ast.Ident).Name),
+						}
+						aliases = append(aliases, m)
+					case *ast.Ident:
+						ali := model.Alias{
+							Doc:  doc,
+							Name: p.Name.Name,
+							Type: p.Type.(*ast.Ident).Name,
+						}
+						aliases = append(aliases, ali)
 					}
 				}
 			}

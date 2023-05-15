@@ -53,6 +53,7 @@ type Function struct {
 }
 
 type Alias struct {
+	Doc  string
 	Name string
 	Type string
 }
