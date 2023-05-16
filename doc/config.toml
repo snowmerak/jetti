@@ -1,0 +1,38 @@
+languageCode = 'en-us'
+title = 'Jetti Docs'
+baseURL = "/"
+themesDir = "themes"
+theme = "hugo-whisper-theme"
+
+[[menu.main]]
+name = "Home"
+url = "/"
+weight = 1
+
+[[menu.main]]
+name = "Docs"
+url = "/docs/"
+weight = 2
+
+[params]
+homepage_button_link = '/docs'
+homepage_button_text = 'Read The Docs'
+homepage_intro = 'Jetti is a simple and useful code generator for golang with directions.'
+
+## You can enable to add anchor links to header elements
+# enable_anchor_link = true
+
+[params.homepage_meta_tags]
+meta_description = "Hugo Whisper is a documentation theme built with Hugo."
+meta_og_title = "Hugo Whisper Theme"
+meta_og_type = "website"
+meta_og_url = "https://jetti.pages.dev"
+meta_og_image = ""
+meta_og_description = "Hugo Whisper is a documentation theme built with Hugo."
+meta_twitter_card = "summary"
+meta_twitter_site = "@snowmerak"
+meta_twitter_creator = "@snowmerak"
+
+[params.logo]
+mobile = "/images/logo-mobile.svg"
+standard  = "/images/logo.svg"
