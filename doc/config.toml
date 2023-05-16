@@ -23,12 +23,12 @@ homepage_intro = 'Jetti is a simple and useful code generator for golang with di
 # enable_anchor_link = true
 
 [params.homepage_meta_tags]
-meta_description = "Hugo Whisper is a documentation theme built with Hugo."
-meta_og_title = "Hugo Whisper Theme"
+meta_description = "Jetti is a simple and useful code generator."
+meta_og_title = "Jetti, a code generator for golang"
 meta_og_type = "website"
 meta_og_url = "https://jetti.pages.dev"
 meta_og_image = ""
-meta_og_description = "Hugo Whisper is a documentation theme built with Hugo."
+meta_og_description = "Jetti is a simple and useful code generator for golang with directions."
 meta_twitter_card = "summary"
 meta_twitter_site = "@snowmerak"
 meta_twitter_creator = "@snowmerak"
