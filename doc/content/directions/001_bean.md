@@ -5,6 +5,8 @@ date: 2023-05-16T21:12:23+09:00
 
 `bean` direction is an instruction for `jetti` to create a bean container based on the structure or interface, type alias.
 
+`bean` is a core of dependency injection.
+
 ## Usage
 
 ```go
