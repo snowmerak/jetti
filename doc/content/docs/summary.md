@@ -3,11 +3,11 @@ title: "Summary"
 date: 2023-05-16T21:12:23+09:00
 ---
 
-제티는 제 프로젝트 구조에 대한 고찰을 반영해 만든 고랭을 위한 코드 생성기입니다.
+Jetti is a code generator for Golang, designed to reflect the considerations of my project structure.
 
-## Project Structure
+# Project Structure
 
-제티는 다음과 같은 프로젝트 구조를 가지려고 노력합니다.
+Jetti strives to have the following project structure:
 
 ```
 .
@@ -18,43 +18,43 @@ date: 2023-05-16T21:12:23+09:00
 └── doc
 ```
 
-### cmd
+## cmd
 
-cmd 디렉토리는 프로젝트의 엔트리 포인트가 될 메인 패키지들을 담습니다.
+The cmd directory contains main packages that serve as entry points for the project.
 
-cmd 디렉토리 아래에 여러 엔트리 포인트를 두게 함으로, `lib`, `model`, `internal` 등의 패키지를 공유하여 다양한 프로그램을 만들 수 있습니다.
+By placing multiple entry points under the cmd directory, it allows sharing of packages such as lib, model, and internal, enabling the creation of various programs.
 
-### model
+## model
 
-model 디렉토리는 프로젝트가 사용할 모델들을 담습니다.
+The model directory contains the models that the project will use.
 
-다음과 같은 타입의 모델들이 담기길 기대합니다.
+It is expected to contain models of the following types:
 
-1. `protobuf`나 `flatbuf` 파일
-2. 통신을 위한 객체(`json`, `xml`, `yaml` 등)
-3. 환경 설정을 위한 객체(`json`, `xml`, `yaml`, `env` 등)
+1. protobuf or flatbuf files
+2. Objects for communication (e.g., json, xml, yaml)
+3. Objects for configuration (e.g., json, xml, yaml, env)
 
-### lib
+## lib
 
-lib 디렉토리는 프로젝트가 사용할 라이브러리들을 담습니다.
+The lib directory contains the libraries that the project will use.
 
-패키지 구조는 다음 규칙을 따릅니다.
+The package structure follows these rules:
 
-1. `lib` 바로 아래 최상단 패키지는 도메인으로 분리합니다.
-2. 객체 패키지와 행위 패키지를 분리합니다.
-3. DTO는 `model`에서 가져옵니다.
-4. 컨텍스트를 적극적으로 사용합니다.
+1. The top-level package directly under lib is separated by domain.
+2. Objects and actions are separated into different packages.
+3. DTOs are obtained from the model package.
+4. Context is used actively.
 
-### internal
+## internal
 
-internal 디렉토리는 프로젝트 내부에서만 사용할 패키지들을 담습니다.
+The internal directory contains packages that are used only within the project.
 
-저는 잘 모르겠습니다.
+I'm not sure about this part.
 
-### doc
+## doc
 
-doc 디렉토리는 프로젝트의 문서들을 담습니다.
+The doc directory contains project documentation.
 
-어떠한 형태가 되었든 주석으로 처리하지 못한 문서들을 담습니다.
+It houses any form of documentation that couldn't be handled as comments.
 
-그 형태는 UML이든, hugo와 같은 정적 사이트 생성기든, 상관없습니다.
+The format can be UML or a static site generator like Hugo, it doesn't matter.
