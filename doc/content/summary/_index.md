@@ -1,11 +1,12 @@
 ---
 title: "Summary"
 date: 2023-05-16T21:12:23+09:00
+weight: 1
 ---
 
 Jetti is a code generator for Golang, designed to reflect the considerations of my project structure.
 
-# Project Structure
+## Project Structure
 
 Jetti strives to have the following project structure:
 

@@ -1,38 +1,54 @@
 languageCode = 'en-us'
-title = 'Jetti Docs'
+title = 'Jetti'
 baseURL = "/"
 themesDir = "themes"
-theme = "hugo-whisper-theme"
+theme = "hugo-theme-techdoc"
 
-[[menu.main]]
-name = "Home"
-url = "/"
-weight = 1
+[main.menu]
 
-[[menu.main]]
-name = "Docs"
-url = "/docs/"
-weight = 2
 
 [params]
-homepage_button_link = '/docs'
-homepage_button_text = 'Read The Docs'
-homepage_intro = 'Jetti is a simple and useful code generator for golang with directions.'
+# Source Code repository section
+description = "Jetti is a simple and useful code generator for golang"
+github_repository = "https://github.com/snowmerak/jetti"
 
-## You can enable to add anchor links to header elements
-# enable_anchor_link = true
+# Documentation repository section
+# documentation repository (set edit link to documentation repository)
+github_doc_repository = "https://github.com/snowmerak/jetti"
+github_doc_repository_path = ""
 
-[params.homepage_meta_tags]
-meta_description = "Jetti is a simple and useful code generator."
-meta_og_title = "Jetti, a code generator for golang"
-meta_og_type = "website"
-meta_og_url = "https://jetti.pages.dev"
-meta_og_image = ""
-meta_og_description = "Jetti is a simple and useful code generator for golang with directions."
-meta_twitter_card = "summary"
-meta_twitter_site = "@snowmerak"
-meta_twitter_creator = "@snowmerak"
+# Analytic section
+google_analytics_id = "" # Your Google Analytics tracking id
+tag_manager_container_id = "" # Your Google Tag Manager container id
+google_site_verification = "" # Your Google Site Verification for Search Console
 
-[params.logo]
-mobile = "/images/logo-mobile.svg"
-standard  = "/images/logo.svg"
+# Open Graph and Twitter Cards settings section
+# Open Graph settings for each page are set on the front matter.
+# See https://gohugo.io/templates/internal/#open-graph
+# See https://gohugo.io/templates/internal/#twitter-cards
+title = "Jetti"
+images = ["images/og-image.png"] # Open graph images are placed in `static/images`
+
+# Theme settings section
+# Theme color
+# See color value reference https://developer.mozilla.org/en-US/docs/Web/CSS/color
+custom_font_color = ""
+custom_background_color = ""
+
+# Documentation Menu section
+# Menu style settings
+menu_style = "open-menu" # "open-menu" or "slide-menu" or "" blank is as no sidebar
+
+# Date format
+dateformat = "" # default "2 Jan 2006"
+# See the format reference https://gohugo.io/functions/format/#hugo-date-and-time-templating-reference
+
+# path name excluded from documentation menu
+menu_exclusion = [
+    "archives",
+    "archive",
+    "blog",
+    "entry",
+    "post",
+    "posts",
+]
