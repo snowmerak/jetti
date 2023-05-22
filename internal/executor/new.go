@@ -57,7 +57,7 @@ func New(root string, moduleName string, kind int) error {
 			return err
 		}
 
-		subDirs := []string{"lib", "cmd", "internal"}
+		subDirs := []string{"lib", "cmd", "internal", "model"}
 		for _, subDir := range subDirs {
 			if err := generate.MakeDocGo(filepath.Join(root, subDir)); err != nil {
 				return err
