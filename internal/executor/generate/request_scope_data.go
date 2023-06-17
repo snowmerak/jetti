@@ -10,7 +10,9 @@ import (
 	"strings"
 )
 
-func Bean(path string, beans []check.Bean) error {
+const Request = "request"
+
+func RequestScopeData(path string, beans []check.Bean) error {
 	dir := filepath.Dir(path)
 	packageName := filepath.Base(dir)
 

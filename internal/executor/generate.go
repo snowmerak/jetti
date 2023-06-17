@@ -62,13 +62,13 @@ func Generate(root string) error {
 					return err
 				}
 
-				beans, err := check.HasBean(pkg)
+				requests, err := check.HasBean(pkg, generate.Request)
 				if err != nil {
 					return err
 				}
 
-				if len(beans) > 0 {
-					if err := generate.Bean(path, beans); err != nil {
+				if len(requests) > 0 {
+					if err := generate.RequestScopeData(path, requests); err != nil {
 						return err
 					}
 					log.Printf("generate bean: %s", relativePath)
