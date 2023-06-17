@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-var subDirectories = []string{"lib", "cmd", "internal", "model"}
+var subDirectories = []string{"lib", "internal", "model"}
 
 func Generate(root string) error {
 	moduleName, err := check.GetModuleName(root)
@@ -30,8 +30,14 @@ func Generate(root string) error {
 		return err
 	}
 
+	beanUpdated := false
+
 	for _, subDir := range subDirectories {
 		if err := filepath.Walk(filepath.Join(root, subDir), func(path string, info os.FileInfo, err error) error {
+			if info == nil {
+				return nil
+			}
+
 			if info.IsDir() {
 				return nil
 			}
@@ -62,13 +68,26 @@ func Generate(root string) error {
 					return err
 				}
 
-				requests, err := check.HasBean(pkg, generate.Request)
+				requests, err := check.HasBean(pkg, generate.RequestDirective)
 				if err != nil {
 					return err
 				}
 
 				if len(requests) > 0 {
 					if err := generate.RequestScopeData(path, requests); err != nil {
+						return err
+					}
+					log.Printf("generate bean: %s", relativePath)
+				}
+
+				beans, err := check.HasBean(pkg, generate.BeanDirective)
+				if err != nil {
+					return err
+				}
+
+				if len(beans) > 0 {
+					beanUpdated = true
+					if err := generate.Bean(moduleName, path, beans); err != nil {
 						return err
 					}
 					log.Printf("generate bean: %s", relativePath)
@@ -133,6 +152,13 @@ func Generate(root string) error {
 				log.Printf("generate flatbuffers: %s", relativePath)
 			default:
 				return nil
+			}
+
+			if beanUpdated {
+				if err := generate.BeanContainer(root); err != nil {
+					return err
+				}
+				beanUpdated = false
 			}
 
 			log.Println("update:", relativePath)

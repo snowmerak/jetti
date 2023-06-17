@@ -101,8 +101,12 @@ func ParseFile(path string) (*model.Package, error) {
 							if !ok {
 								continue
 							}
+							name := ""
+							if len(field.Names) > 0 {
+								name = field.Names[0].Name
+							}
 							fi := model.Field{
-								Name: field.Names[0].Name,
+								Name: name,
 								Type: typ.Name,
 							}
 							if field.Tag != nil {

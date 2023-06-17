@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-const Request = "request"
+const RequestDirective = "request"
 
 func RequestScopeData(path string, beans []check.Bean) error {
 	dir := filepath.Dir(path)
