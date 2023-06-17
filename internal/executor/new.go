@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 const commandScaffold = `package main
@@ -15,6 +16,12 @@ import "fmt"
 func main() {
 	fmt.Println("Hello, World!")
 }
+`
+
+const generateScaffold = `package main
+
+//go:generate jetti generate
+
 `
 
 const protoScaffold = `syntax = "proto3";
@@ -64,6 +71,29 @@ func New(root string, moduleName string, kind int) error {
 		}
 
 		if err := generate.MakeReadme(root, moduleName); err != nil {
+			return err
+		}
+
+		f, err := os.Create(filepath.Join(root, "generate.go"))
+		if err != nil {
+			return err
+		}
+		defer func(f *os.File) {
+			f.Close()
+		}(f)
+		if _, err := f.WriteString(generateScaffold); err != nil {
+			return err
+		}
+
+		gitIgnores := []string{".jetti-cache"}
+		f, err = os.Create(filepath.Join(root, ".gitignore"))
+		if err != nil {
+			return err
+		}
+		defer func(f *os.File) {
+			f.Close()
+		}(f)
+		if _, err := f.WriteString(strings.Join(gitIgnores, "\n")); err != nil {
 			return err
 		}
 	case NewKindProto:

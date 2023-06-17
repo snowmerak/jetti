@@ -117,10 +117,77 @@ func BeanContainer(root string) error {
 	return nil
 }
 
-func Bean(moduleName string, path string, beans []check.Bean) error {
+func Bean(path string, beans []check.Bean) error {
 	dir := filepath.Dir(path)
 	packageName := filepath.Base(dir)
-	beanPath := filepath.Join(moduleName, "gen", "bean")
+
+	if len(beans) == 0 {
+		return nil
+	}
+
+	{
+		ifce := []model.Interface{
+			{
+				Name: "Container",
+				Methods: []model.Method{
+					{
+						Name: "Get",
+						Params: []model.Field{
+							{
+								Name: "key",
+								Type: "any",
+							},
+						},
+						Return: []model.Field{
+							{
+								Name: "value",
+								Type: "any",
+							},
+							{
+								Name: "ok",
+								Type: "bool",
+							},
+						},
+					},
+					{
+						Name: "Set",
+						Params: []model.Field{
+							{
+								Name: "key",
+								Type: "any",
+							},
+							{
+								Name: "value",
+								Type: "any",
+							},
+						},
+					},
+					{
+						Name: "Delete",
+						Params: []model.Field{
+							{
+								Name: "key",
+								Type: "any",
+							},
+						},
+					},
+				},
+			},
+		}
+
+		ifceFilePath := filepath.Join(dir, "bean.interface.go")
+		ifcePkg := &model.Package{
+			Name:       packageName,
+			Interfaces: ifce,
+		}
+		ifceData, err := generator.GenerateFile(ifcePkg)
+		if err != nil {
+			return err
+		}
+		if err := os.WriteFile(ifceFilePath, ifceData, os.ModePerm); err != nil {
+			return err
+		}
+	}
 
 	for _, bean := range beans {
 		for _, alias := range bean.Aliases {
@@ -136,9 +203,6 @@ func Bean(moduleName string, path string, beans []check.Bean) error {
 			pkg := &model.Package{
 				Name: packageName,
 				Imports: []model.Import{
-					{
-						Path: beanPath,
-					},
 					{
 						Path: "errors",
 					},
@@ -162,7 +226,7 @@ func Bean(moduleName string, path string, beans []check.Bean) error {
 						Params: []model.Field{
 							{
 								Name: "beanContainer",
-								Type: "*bean.Container",
+								Type: "Container",
 							},
 							{
 								Name: "value",
@@ -178,7 +242,7 @@ func Bean(moduleName string, path string, beans []check.Bean) error {
 						Params: []model.Field{
 							{
 								Name: "beanContainer",
-								Type: "*bean.Container",
+								Type: "Container",
 							},
 						},
 						Return: []model.Field{
