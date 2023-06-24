@@ -103,6 +103,23 @@ func BeanContainer(root string) error {
 				},
 			},
 		},
+		Functions: []model.Function{
+			{
+				Name: "NewContainer",
+				Return: []model.Field{
+					{
+						Name: "container",
+						Type: "*Container",
+					},
+				},
+				Code: []string{
+					"container = &Container{",
+					"beans: make(map[any]any),",
+					"}",
+					"return",
+				},
+			},
+		},
 	}
 
 	data, err := generator.GenerateFile(pkg)
