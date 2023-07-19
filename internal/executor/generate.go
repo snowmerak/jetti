@@ -60,6 +60,8 @@ func Generate(root string) error {
 				return nil
 			}
 
+			errFaces := make([]check.Getter, 0)
+
 			log.Println("check:", relativePath)
 			switch filepath.Ext(path) {
 			case ".go":
@@ -128,6 +130,19 @@ func Generate(root string) error {
 					}
 					log.Printf("generate optional: %s", relativePath)
 				}
+
+				getters, err := check.HasGetter(pkg)
+				if err != nil {
+					return err
+				}
+
+				if len(getters) > 0 {
+					errFaces = append(errFaces, getters...)
+					if err := generate.Getter(path, getters); err != nil {
+						return err
+					}
+					log.Printf("generate getter: %s", relativePath)
+				}
 			case ".json":
 				if err := generate.ConvertJson(path); err != nil {
 					return err
@@ -159,6 +174,12 @@ func Generate(root string) error {
 					return err
 				}
 				beanUpdated = false
+			}
+
+			if len(errFaces) > 0 {
+				if err := generate.ErrFace(root, errFaces); err != nil {
+					return err
+				}
 			}
 
 			log.Println("update:", relativePath)
