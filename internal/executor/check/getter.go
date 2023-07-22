@@ -8,27 +8,34 @@ import (
 type Getter struct {
 	PackageName string
 	Imports     []model.Import
-	StructName  string
-	FieldName   string
-	FieldType   string
+	StructMap   map[string]GetterStruct
 }
 
-func HasGetter(pkg *model.Package) ([]Getter, error) {
-	list := make([]Getter, 0)
+type GetterStruct struct {
+	FieldNames []string
+	FieldTypes []string
+}
+
+func HasGetter(pkg *model.Package) (Getter, error) {
+	list := Getter{
+		PackageName: pkg.Name,
+		Imports:     pkg.Imports,
+		StructMap:   map[string]GetterStruct{},
+	}
 
 	for _, s := range pkg.Structs {
 		if !strings.Contains(s.Doc, "jetti:getter") {
 			continue
 		}
-		for _, f := range s.Fields {
-			list = append(list, Getter{
-				PackageName: pkg.Name,
-				Imports:     pkg.Imports,
-				StructName:  s.Name,
-				FieldName:   f.Name,
-				FieldType:   f.Type,
-			})
+		gs, ok := list.StructMap[s.Name]
+		if !ok {
+			gs = GetterStruct{}
 		}
+		for _, f := range s.Fields {
+			gs.FieldNames = append(gs.FieldNames, f.Name)
+			gs.FieldTypes = append(gs.FieldTypes, f.Type)
+		}
+		list.StructMap[s.Name] = gs
 	}
 
 	return list, nil

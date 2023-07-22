@@ -10,17 +10,17 @@ import (
 	"strings"
 )
 
-func Getter(path string, getters []check.Getter) error {
+func Getter(path string, getter check.Getter) error {
 	dir := filepath.Dir(path)
 
-	makeFilename := func(getter check.Getter) string {
-		return filepath.Join(dir, fmt.Sprintf("%s.getter.go", getter.StructName))
+	makeFilename := func(pkgName string, structName string) string {
+		return filepath.Join(dir, fmt.Sprintf("%s.%s.getter.go", pkgName, structName))
 	}
 
 	fileMap := map[string]*model.Package{}
 
-	for _, getter := range getters {
-		filename := makeFilename(getter)
+	for structName, structData := range getter.StructMap {
+		filename := makeFilename(getter.PackageName, structName)
 
 		pkg, ok := fileMap[filename]
 		if !ok {
@@ -31,22 +31,24 @@ func Getter(path string, getters []check.Getter) error {
 			fileMap[filename] = pkg
 		}
 
-		fieldName := strings.ToUpper(getter.FieldName[:1]) + getter.FieldName[1:]
-		pkg.Methods = append(pkg.Methods, model.Method{
-			Name: fmt.Sprintf("Get%s", fieldName),
-			Receiver: model.Field{
-				Name: getter.StructName[:1],
-				Type: getter.StructName,
-			},
-			Return: []model.Field{
-				{
-					Type: getter.FieldType,
+		for i, fieldName := range structData.FieldNames {
+			fieldName := strings.ToUpper(fieldName[:1]) + fieldName[1:]
+			pkg.Methods = append(pkg.Methods, model.Method{
+				Name: fmt.Sprintf("Get%s", fieldName),
+				Receiver: model.Field{
+					Name: structName[:1],
+					Type: structName,
 				},
-			},
-			Code: []string{
-				fmt.Sprintf("return $RECEIVER$.%s", getter.FieldName),
-			},
-		})
+				Return: []model.Field{
+					{
+						Type: structData.FieldTypes[i],
+					},
+				},
+				Code: []string{
+					fmt.Sprintf("return $RECEIVER$.%s", structData.FieldNames[i]),
+				},
+			})
+		}
 	}
 
 	for filename, pkg := range fileMap {

@@ -131,14 +131,14 @@ func Generate(root string) error {
 					log.Printf("generate optional: %s", relativePath)
 				}
 
-				getters, err := check.HasGetter(pkg)
+				getter, err := check.HasGetter(pkg)
 				if err != nil {
 					return err
 				}
 
-				if len(getters) > 0 {
-					errFaces = append(errFaces, getters...)
-					if err := generate.Getter(path, getters); err != nil {
+				if len(getter.StructMap) > 0 {
+					errFaces = append(errFaces, getter)
+					if err := generate.Getter(path, getter); err != nil {
 						return err
 					}
 					log.Printf("generate getter: %s", relativePath)

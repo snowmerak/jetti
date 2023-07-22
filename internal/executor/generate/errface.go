@@ -16,60 +16,58 @@ func ErrFace(root string, getters []check.Getter) error {
 		return err
 	}
 
-	f, err := os.Create(filepath.Join(dir, "errface.go"))
-	if err != nil {
-		return err
-	}
-
-	pkg := &model.Package{
-		Name: "errface",
-	}
-
-	importsSet := map[string]struct{}{}
 	for _, getter := range getters {
-		for _, imp := range getter.Imports {
-			if _, ok := importsSet[imp.Path]; ok {
-				continue
+		if err := func() error {
+			for structName, structData := range getter.StructMap {
+				if err := func() error {
+					f, err := os.Create(filepath.Join(dir, getter.PackageName+"."+structName+".errface.go"))
+					if err != nil {
+						return err
+					}
+					defer f.Close()
+
+					pkg := &model.Package{
+						Name:       getter.PackageName,
+						Imports:    getter.Imports,
+						Interfaces: []model.Interface{},
+					}
+
+					for i, fieldName := range structData.FieldNames {
+						fieldName := strings.ToUpper(fieldName[:1]) + fieldName[1:]
+						pkg.Interfaces = append(pkg.Interfaces, model.Interface{
+							Name: fmt.Sprintf("Get%s", fieldName),
+							Methods: []model.Method{
+								{
+									Name: "Get" + fieldName,
+									Return: []model.Field{
+										{
+											Type: structData.FieldTypes[i],
+										},
+									},
+								},
+							},
+						})
+					}
+
+					value, err := generator.GenerateFile(pkg)
+					if err != nil {
+						return err
+					}
+
+					if _, err := f.Write(value); err != nil {
+						return err
+					}
+
+					return nil
+				}(); err != nil {
+					return err
+				}
 			}
-			importsSet[imp.Path] = struct{}{}
-			pkg.Imports = append(pkg.Imports, imp)
+
+			return nil
+		}(); err != nil {
+			return err
 		}
-
-		fieldName := strings.ToUpper(getter.FieldName[:1]) + getter.FieldName[1:]
-		typeName := strings.TrimPrefix(getter.FieldType, "*")
-		typeName = strings.TrimPrefix(typeName, "[]")
-		typeName = strings.TrimPrefix(typeName, "...")
-		typeName = strings.ToUpper(typeName[:1]) + typeName[1:]
-		switch {
-		case strings.HasPrefix(getter.FieldType, "*"):
-			typeName = typeName + "Pointer"
-		case strings.HasPrefix(getter.FieldType, "[]"):
-			typeName = typeName + "Slice"
-		case strings.HasPrefix(getter.FieldType, "..."):
-			typeName = typeName + "Slice"
-		}
-		pkg.Interfaces = append(pkg.Interfaces, model.Interface{
-			Name: fmt.Sprintf("%s%s", fieldName, typeName),
-			Methods: []model.Method{
-				{
-					Name: fmt.Sprintf("Get%s", fieldName),
-					Return: []model.Field{
-						{
-							Type: getter.FieldType,
-						},
-					},
-				},
-			},
-		})
-	}
-
-	value, err := generator.GenerateFile(pkg)
-	if err != nil {
-		return err
-	}
-
-	if _, err := f.Write(value); err != nil {
-		return err
 	}
 
 	return nil
