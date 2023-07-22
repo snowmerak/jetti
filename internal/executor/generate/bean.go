@@ -12,6 +12,94 @@ import (
 
 const BeanDirective = "bean"
 
+var beanInterfaceValue = []model.Interface{
+	{
+		Name: "Container",
+		Methods: []model.Method{
+			{
+				Name: "Get",
+				Params: []model.Field{
+					{
+						Name: "key",
+						Type: "any",
+					},
+				},
+				Return: []model.Field{
+					{
+						Name: "value",
+						Type: "any",
+					},
+					{
+						Name: "ok",
+						Type: "bool",
+					},
+				},
+			},
+			{
+				Name: "Set",
+				Params: []model.Field{
+					{
+						Name: "key",
+						Type: "any",
+					},
+					{
+						Name: "value",
+						Type: "any",
+					},
+				},
+			},
+			{
+				Name: "Delete",
+				Params: []model.Field{
+					{
+						Name: "key",
+						Type: "any",
+					},
+				},
+			},
+			{
+				Name: "Keys",
+				Return: []model.Field{
+					{
+						Name: "keys",
+						Type: "[]any",
+					},
+				},
+				Code: []string{
+					"keys = make([]any, 0, len($RECEIVER$.beans))",
+					"for key := range $RECEIVER$.beans {",
+					"keys = append(keys, key)",
+					"}",
+					"return",
+				},
+			},
+		},
+	},
+}
+
+var beanCopyFunction = model.Function{
+	Name: "CopyBeanContainer",
+	Params: []model.Field{
+		{
+			Name: "dst",
+			Type: "Container",
+		},
+		{
+			Name: "src",
+			Type: "Container",
+		},
+	},
+	Code: []string{
+		"for _, key := range src.Keys() {",
+		"value, ok := src.Get(key)",
+		"if !ok {",
+		"continue",
+		"}",
+		"dst.Set(key, value)",
+		"}",
+	},
+}
+
 func BeanContainer(root string) error {
 	genPath := filepath.Join(root, "gen", "bean")
 	if err := os.MkdirAll(genPath, os.ModePerm); err != nil {
@@ -29,9 +117,10 @@ func BeanContainer(root string) error {
 				Path: "sync",
 			},
 		},
+		Interfaces: beanInterfaceValue,
 		Structs: []model.Struct{
 			{
-				Name: "Container",
+				Name: "Default",
 				Fields: []model.Field{
 					{
 						Name: "beans",
@@ -100,6 +189,24 @@ func BeanContainer(root string) error {
 							"$RECEIVER$.lock.Unlock()",
 						},
 					},
+					{
+						Name: "Keys",
+						Return: []model.Field{
+							{
+								Name: "keys",
+								Type: "[]any",
+							},
+						},
+						Code: []string{
+							"$RECEIVER$.lock.RLock()",
+							"keys = make([]any, 0, len($RECEIVER$.beans))",
+							"for key := range $RECEIVER$.beans {",
+							"keys = append(keys, key)",
+							"}",
+							"$RECEIVER$.lock.RUnlock()",
+							"return",
+						},
+					},
 				},
 			},
 		},
@@ -109,16 +216,17 @@ func BeanContainer(root string) error {
 				Return: []model.Field{
 					{
 						Name: "container",
-						Type: "*Container",
+						Type: "*Default",
 					},
 				},
 				Code: []string{
-					"container = &Container{",
+					"container = &Default{",
 					"beans: make(map[any]any),",
 					"}",
 					"return",
 				},
 			},
+			beanCopyFunction,
 		},
 	}
 
@@ -143,59 +251,11 @@ func Bean(path string, beans []check.Bean) error {
 	}
 
 	{
-		ifce := []model.Interface{
-			{
-				Name: "Container",
-				Methods: []model.Method{
-					{
-						Name: "Get",
-						Params: []model.Field{
-							{
-								Name: "key",
-								Type: "any",
-							},
-						},
-						Return: []model.Field{
-							{
-								Name: "value",
-								Type: "any",
-							},
-							{
-								Name: "ok",
-								Type: "bool",
-							},
-						},
-					},
-					{
-						Name: "Set",
-						Params: []model.Field{
-							{
-								Name: "key",
-								Type: "any",
-							},
-							{
-								Name: "value",
-								Type: "any",
-							},
-						},
-					},
-					{
-						Name: "Delete",
-						Params: []model.Field{
-							{
-								Name: "key",
-								Type: "any",
-							},
-						},
-					},
-				},
-			},
-		}
-
 		ifceFilePath := filepath.Join(dir, "bean.interface.go")
 		ifcePkg := &model.Package{
 			Name:       packageName,
-			Interfaces: ifce,
+			Interfaces: beanInterfaceValue,
+			Functions:  []model.Function{beanCopyFunction},
 		}
 		ifceData, err := generator.GenerateFile(ifcePkg)
 		if err != nil {
