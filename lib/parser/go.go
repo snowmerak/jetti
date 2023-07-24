@@ -6,6 +6,7 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"log"
 	"strings"
 )
 
@@ -97,22 +98,146 @@ func ParseFile(path string) (*model.Package, error) {
 							Name: p.Name.Name,
 						}
 						for _, field := range e.Fields.List {
-							typ, ok := field.Type.(*ast.Ident)
-							if !ok {
-								continue
+							switch typ := field.Type.(type) {
+							case *ast.Ident:
+								name := ""
+								if len(field.Names) > 0 {
+									name = field.Names[0].Name
+								}
+								fi := model.Field{
+									Name: name,
+									Type: typ.Name,
+								}
+								if field.Tag != nil {
+									fi.Tag = field.Tag.Value
+								}
+								st.Fields = append(st.Fields, fi)
+							case *ast.StarExpr:
+								name := ""
+								if len(field.Names) > 0 {
+									name = field.Names[0].Name
+								}
+								fi := model.Field{
+									Name: name,
+									Type: "*" + typ.X.(*ast.Ident).Name,
+								}
+								if field.Tag != nil {
+									fi.Tag = field.Tag.Value
+								}
+								st.Fields = append(st.Fields, fi)
+							case *ast.ArrayType:
+								name := ""
+								if len(field.Names) > 0 {
+									name = field.Names[0].Name
+								}
+								length := ""
+								if typ.Len != nil {
+									length = typ.Len.(*ast.BasicLit).Value
+								}
+								length = "[" + length + "]"
+								fi := model.Field{
+									Name: name,
+									Type: length + typ.Elt.(*ast.Ident).Name,
+								}
+								if field.Tag != nil {
+									fi.Tag = field.Tag.Value
+								}
+								st.Fields = append(st.Fields, fi)
+							case *ast.MapType:
+								name := ""
+								if len(field.Names) > 0 {
+									name = field.Names[0].Name
+								}
+								fi := model.Field{
+									Name: name,
+									Type: fmt.Sprintf("map[%s]%s", typ.Key.(*ast.Ident).Name, typ.Value.(*ast.Ident).Name),
+								}
+								if field.Tag != nil {
+									fi.Tag = field.Tag.Value
+								}
+								st.Fields = append(st.Fields, fi)
+							case *ast.FuncType:
+								name := ""
+								if len(field.Names) > 0 {
+									name = field.Names[0].Name
+								}
+
+								ft := &model.FuncType{}
+								if typ.Params != nil {
+									for _, param := range typ.Params.List {
+										typ, ok := param.Type.(*ast.Ident)
+										if !ok {
+											continue
+										}
+										name := ""
+										if len(param.Names) > 0 {
+											name = param.Names[0].Name
+										}
+										ft.Params = append(ft.Params, model.Field{
+											Name: name,
+											Type: typ.Name,
+										})
+									}
+								}
+
+								if typ.Results != nil {
+									for _, result := range typ.Results.List {
+										typ, ok := result.Type.(*ast.Ident)
+										if !ok {
+											continue
+										}
+										name := ""
+										if len(result.Names) > 0 {
+											name = result.Names[0].Name
+										}
+										ft.Return = append(ft.Return, model.Field{
+											Name: name,
+											Type: typ.Name,
+										})
+									}
+								}
+
+								funcValue := strings.Builder{}
+								funcValue.WriteString("func(")
+								for i, param := range ft.Params {
+									if i > 0 {
+										funcValue.WriteString(", ")
+									}
+									if param.Name != "" {
+										funcValue.WriteString(param.Name)
+										funcValue.WriteString(" ")
+									}
+									funcValue.WriteString(param.Type)
+								}
+								funcValue.WriteString(") ")
+								if len(ft.Return) > 0 {
+									funcValue.WriteString("(")
+									for i, result := range ft.Return {
+										if i > 0 {
+											funcValue.WriteString(", ")
+										}
+										if result.Name != "" {
+											funcValue.WriteString(result.Name)
+											funcValue.WriteString(" ")
+										}
+										funcValue.WriteString(result.Type)
+									}
+									funcValue.WriteString(")")
+								}
+
+								fi := model.Field{
+									Name:     name,
+									Type:     funcValue.String(),
+									FuncType: ft,
+								}
+
+								if field.Tag != nil {
+									fi.Tag = field.Tag.Value
+								}
+								st.Fields = append(st.Fields, fi)
+							default:
+								log.Printf("unknown type: %T\n", typ)
 							}
-							name := ""
-							if len(field.Names) > 0 {
-								name = field.Names[0].Name
-							}
-							fi := model.Field{
-								Name: name,
-								Type: typ.Name,
-							}
-							if field.Tag != nil {
-								fi.Tag = field.Tag.Value
-							}
-							st.Fields = append(st.Fields, fi)
 						}
 						structs = append(structs, st)
 					case *ast.InterfaceType:
