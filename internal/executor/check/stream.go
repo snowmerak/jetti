@@ -1,7 +1,6 @@
 package check
 
 import (
-	"fmt"
 	"github.com/snowmerak/jetti/v2/lib/model"
 	"strings"
 )
@@ -16,7 +15,6 @@ func HasStream(pkg *model.Package) []Stream {
 	streams := make([]Stream, 0)
 
 	for _, s := range pkg.Structs {
-		fmt.Printf("%+v\n", s)
 		if strings.Contains(s.Doc, "jetti:stream") {
 			for _, f := range s.Fields {
 				if f.FuncType == nil {
