@@ -1,9 +1,15 @@
 package model
 
 type Field struct {
-	Name string
-	Type string
-	Tag  string
+	Name     string
+	Type     string
+	FuncType *FuncType
+	Tag      string
+}
+
+type FuncType struct {
+	Params []Field
+	Return []Field
 }
 
 type Package struct {
