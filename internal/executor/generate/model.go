@@ -154,7 +154,7 @@ func ConvertJson(path string) error {
 		return err
 	}
 
-	f, err := os.Create(path + ".go")
+	f, err := os.Create(path + "." + Suffix)
 	if err != nil {
 		return err
 	}
@@ -316,7 +316,7 @@ func ConvertYaml(path string) error {
 		return err
 	}
 
-	f, err := os.Create(path + ".go")
+	f, err := os.Create(path + "." + Suffix)
 	if err != nil {
 		return err
 	}

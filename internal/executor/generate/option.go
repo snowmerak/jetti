@@ -143,7 +143,7 @@ func Option(path string, opts []string) error {
 				return err
 			}
 
-			f, err := os.Create(filepath.Join(dir, strings.ToLower(typeName)+".option.go"))
+			f, err := os.Create(MakeGeneratedFileName(dir, strings.ToLower(typeName), "option"))
 			if err != nil {
 				return err
 			}

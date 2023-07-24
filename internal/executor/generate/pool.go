@@ -16,7 +16,7 @@ func Pool(path string, pools []check.Pool) error {
 	for _, pool := range pools {
 		alias := strings.ToUpper(pool.Alias[:1]) + pool.Alias[1:]
 		lowerAlias := strings.ToLower(alias)
-		filePath := filepath.Join(dir, lowerAlias+".pool.go")
+		filePath := MakeGeneratedFileName(dir, lowerAlias, "pool")
 
 		typ := pool.TypeName
 		switch pool.Type {

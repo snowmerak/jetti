@@ -7,7 +7,6 @@ import (
 
 const Suffix = "jet.go"
 
-func MakeGeneratedFileName(path string, elem ...string) string {
-	dir := filepath.Dir(path)
+func MakeGeneratedFileName(dir string, elem ...string) string {
 	return filepath.Join(dir, strings.Join(elem, ".")+"."+Suffix)
 }

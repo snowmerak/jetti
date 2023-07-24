@@ -105,7 +105,7 @@ func BeanContainer(root string) error {
 	if err := os.MkdirAll(genPath, os.ModePerm); err != nil {
 		return err
 	}
-	f, err := os.Create(filepath.Join(genPath, "bean.container.go"))
+	f, err := os.Create(MakeGeneratedFileName(genPath, "bean", "container"))
 	if err != nil {
 		return err
 	}
@@ -251,7 +251,7 @@ func Bean(path string, beans []check.Bean) error {
 	}
 
 	{
-		ifceFilePath := filepath.Join(dir, "bean.interface.go")
+		ifceFilePath := MakeGeneratedFileName(dir, "bean", "interface")
 		ifcePkg := &model.Package{
 			Name:       packageName,
 			Interfaces: beanInterfaceValue,
@@ -269,7 +269,7 @@ func Bean(path string, beans []check.Bean) error {
 	for _, bean := range beans {
 		for _, alias := range bean.Aliases {
 			alias = strings.ToUpper(alias[:1]) + alias[1:]
-			filePath := filepath.Join(dir, strings.ToLower(alias)+".bean.go")
+			filePath := MakeGeneratedFileName(dir, strings.ToLower(alias), "bean")
 			typ := bean.Name
 			switch bean.Type {
 			case check.TypeStruct:

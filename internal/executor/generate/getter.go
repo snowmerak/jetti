@@ -14,7 +14,7 @@ func Getter(path string, getter check.Getter) error {
 	dir := filepath.Dir(path)
 
 	makeFilename := func(pkgName string, structName string) string {
-		return filepath.Join(dir, fmt.Sprintf("%s.%s.getter.go", pkgName, structName))
+		return filepath.Join(MakeGeneratedFileName(dir, pkgName, structName, "getter"))
 	}
 
 	fileMap := map[string]*model.Package{}

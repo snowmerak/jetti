@@ -11,7 +11,7 @@ import (
 
 func Stream(path string, streams []check.Stream) error {
 	for _, stream := range streams {
-		fileName := MakeGeneratedFileName(path, stream.StructName, "stream")
+		fileName := MakeGeneratedFileName(path, strings.ToLower(stream.StructName), "stream")
 
 		pkg := &model.Package{
 			Name:    stream.PackageName,

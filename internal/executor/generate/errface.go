@@ -20,7 +20,7 @@ func ErrFace(root string, getters []check.Getter) error {
 		if err := func() error {
 			for structName, structData := range getter.StructMap {
 				if err := func() error {
-					f, err := os.Create(filepath.Join(dir, getter.PackageName+"."+structName+".errface.go"))
+					f, err := os.Create(MakeGeneratedFileName(dir, structName, "errface"))
 					if err != nil {
 						return err
 					}
