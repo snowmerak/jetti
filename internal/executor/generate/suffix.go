@@ -1,9 +1,13 @@
 package generate
 
-import "strings"
+import (
+	"path/filepath"
+	"strings"
+)
 
 const Suffix = "jet.go"
 
-func MakeGeneratedFileName(elem ...string) string {
-	return strings.Join(elem, ".") + "." + Suffix
+func MakeGeneratedFileName(path string, elem ...string) string {
+	dir := filepath.Dir(path)
+	return filepath.Join(dir, strings.Join(elem, ".")+"."+Suffix)
 }
