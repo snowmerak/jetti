@@ -7,6 +7,7 @@ import (
 
 type Stream struct {
 	PackageName       string
+	StructName        string
 	Imports           []model.Import
 	FunctionSignature []model.Function
 }
@@ -16,15 +17,16 @@ func HasStream(pkg *model.Package) []Stream {
 
 	for _, s := range pkg.Structs {
 		if strings.Contains(s.Doc, "jetti:stream") {
+			streams = append(streams, Stream{
+				PackageName: pkg.Name,
+				Imports:     pkg.Imports,
+				StructName:  s.Name,
+			})
+
 			for _, f := range s.Fields {
 				if f.FuncType == nil {
 					continue
 				}
-
-				streams = append(streams, Stream{
-					PackageName: pkg.Name,
-					Imports:     pkg.Imports,
-				})
 
 				streams[len(streams)-1].FunctionSignature = append(streams[len(streams)-1].FunctionSignature, model.Function{
 					Name:   f.Name,
