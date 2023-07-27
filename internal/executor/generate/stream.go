@@ -6,12 +6,15 @@ import (
 	"github.com/snowmerak/jetti/v2/lib/generator"
 	"github.com/snowmerak/jetti/v2/lib/model"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
 func Stream(path string, streams []check.Stream) error {
+	dir := filepath.Dir(path)
+
 	for _, stream := range streams {
-		fileName := MakeGeneratedFileName(path, strings.ToLower(stream.StructName), "stream")
+		fileName := MakeGeneratedFileName(dir, strings.ToLower(stream.StructName), "stream")
 
 		pkg := &model.Package{
 			Name:    stream.PackageName,
