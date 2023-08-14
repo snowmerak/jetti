@@ -65,6 +65,7 @@ type Alias struct {
 }
 
 type GlobalVariable struct {
+	Doc   string
 	Name  string
 	Type  string
 	Value string
