@@ -143,13 +143,6 @@ func Generate(root string) error {
 					}
 					log.Printf("generate getter: %s", relativePath)
 				}
-
-				streams := check.HasStream(pkg)
-				if len(streams) > 0 {
-					if err := generate.Stream(path, streams); err != nil {
-						return err
-					}
-				}
 			case ".json":
 				if err := generate.ConvertJson(path); err != nil {
 					return err
