@@ -46,9 +46,29 @@ func ParseStmt(node ast.Node) string {
 	case *ast.ExprStmt:
 		return ParseExpr(x.X)
 	case *ast.AssignStmt:
-		return ParseExpr(x.Lhs[0]) + " " + x.Tok.String() + " " + ParseExpr(x.Rhs[0])
+		rs := ""
+		for i, expr := range x.Lhs {
+			if i > 0 {
+				rs += ", "
+			}
+			rs += ParseExpr(expr)
+		}
+		rs += " " + x.Tok.String() + " "
+		for i, expr := range x.Rhs {
+			if i > 0 {
+				rs += ", "
+			}
+			rs += ParseExpr(expr)
+		}
 	case *ast.ReturnStmt:
-		return "return " + ParseExpr(x.Results[0])
+		rs := "return "
+		for i, result := range x.Results {
+			if i > 0 {
+				rs += ", "
+			}
+			rs += ParseExpr(result)
+		}
+		return rs
 	case *ast.IfStmt:
 		return "if " + ParseExpr(x.Cond) + " {" + ParseStmt(x.Body) + "}"
 	case *ast.ForStmt:
@@ -56,7 +76,11 @@ func ParseStmt(node ast.Node) string {
 	case *ast.RangeStmt:
 		return "for " + ParseExpr(x.Key) + ", " + ParseExpr(x.Value) + " := range " + ParseExpr(x.X) + " {" + ParseStmt(x.Body) + "}"
 	case *ast.BlockStmt:
-		return "{" + ParseStmt(x.List[0]) + "}"
+		rs := "{ "
+		for _, stmt := range x.List {
+			rs += ParseStmt(stmt)
+		}
+		return rs + " }"
 	case *ast.DeclStmt:
 		return ParseDecl(x.Decl)
 	case *ast.IncDecStmt:
@@ -64,7 +88,18 @@ func ParseStmt(node ast.Node) string {
 	case *ast.SwitchStmt:
 		return "switch " + ParseExpr(x.Tag) + " {" + ParseStmt(x.Body) + "}"
 	case *ast.CaseClause:
-		return "case " + ParseExpr(x.List[0]) + ": " + ParseStmt(x.Body[0])
+		rs := "case "
+		for i, expr := range x.List {
+			if i > 0 {
+				rs += ", "
+			}
+			rs += ParseExpr(expr)
+		}
+		rs += ":"
+		for _, stmt := range x.Body {
+			rs += ParseStmt(stmt)
+		}
+		return rs
 	case *ast.TypeSwitchStmt:
 		return "switch " + ParseStmt(x.Body)
 	case *ast.TypeAssertExpr:
@@ -72,7 +107,15 @@ func ParseStmt(node ast.Node) string {
 	case *ast.SelectStmt:
 		return "select {" + ParseStmt(x.Body) + "}"
 	case *ast.CommClause:
-		return "case " + ParseStmt(x.Body[0])
+		rs := "case "
+		if x.Comm != nil {
+			rs += ParseStmt(x.Comm)
+		}
+		rs += ":"
+		for _, stmt := range x.Body {
+			rs += ParseStmt(stmt)
+		}
+		return rs
 	case *ast.SendStmt:
 		return ParseExpr(x.Chan) + " <- " + ParseExpr(x.Value)
 	case *ast.BranchStmt:
@@ -122,16 +165,26 @@ func ParseExpr(node ast.Expr) string {
 		return x.Value
 	case *ast.CallExpr:
 		v := ParseExpr(x.Fun) + "("
-		for _, arg := range x.Args {
-			v += ParseExpr(arg) + ", "
+		for i, arg := range x.Args {
+			if i > 0 {
+				v += ", "
+			}
+			v += ParseExpr(arg)
 		}
-		return v[:len(v)-2] + ")"
+		return v + ")"
 	case *ast.BinaryExpr:
 		return ParseExpr(x.X) + " " + x.Op.String() + " " + ParseExpr(x.Y)
 	case *ast.UnaryExpr:
 		return x.Op.String() + ParseExpr(x.X)
 	case *ast.CompositeLit:
-		return ParseExpr(x.Type) + "{" + ParseExpr(x.Elts[0]) + "}"
+		rs := ParseExpr(x.Type) + "{"
+		for i, elt := range x.Elts {
+			if i > 0 {
+				rs += ", "
+			}
+			rs += ParseExpr(elt)
+		}
+		return rs + "}"
 	case *ast.IndexExpr:
 		return ParseExpr(x.X) + "[" + ParseExpr(x.Index) + "]"
 	case *ast.SliceExpr:
