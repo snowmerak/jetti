@@ -1,10 +1,10 @@
 package model
 
 type Field struct {
-	Name     string
-	Type     string
-	FuncType *FuncType
-	Tag      string
+	Name     string    `json:"name,omitempty"`
+	Type     string    `json:"type,omitempty"`
+	FuncType *FuncType `json:"funcType,omitempty"`
+	Tag      string    `json:"tag,omitempty"`
 }
 
 type FuncType struct {
@@ -36,17 +36,17 @@ type Struct struct {
 }
 
 type Method struct {
-	Receiver Field
-	Name     string
-	Params   []Field
-	Return   []Field
-	Code     []string
+	Receiver Field    `json:"receiver"`
+	Name     string   `json:"name"`
+	Params   []Field  `json:"params"`
+	Return   []Field  `json:"return"`
+	Code     []string `json:"code"`
 }
 
 type Interface struct {
-	Doc     string
-	Name    string
-	Methods []Method
+	Doc     string   `json:"doc"`
+	Name    string   `json:"name"`
+	Methods []Method `json:"methods"`
 }
 
 type Function struct {
