@@ -4,6 +4,7 @@ import (
 	"github.com/snowmerak/jetti/v2/lib/model"
 	"go/ast"
 	"go/token"
+	"strings"
 )
 
 func ParseImports(node ast.Node) []model.Import {
@@ -33,10 +34,10 @@ func ParseImport(node *ast.ImportSpec) model.Import {
 	if node.Name != nil {
 		return model.Import{
 			Alias: node.Name.Name,
-			Path:  node.Path.Value,
+			Path:  strings.Trim(node.Path.Value, "\""),
 		}
 	}
 	return model.Import{
-		Path: node.Path.Value,
+		Path: strings.Trim(node.Path.Value, "\""),
 	}
 }
