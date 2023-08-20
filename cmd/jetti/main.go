@@ -4,7 +4,9 @@ import (
 	"github.com/alecthomas/kong"
 	"github.com/snowmerak/jetti/v2/internal/executor"
 	"github.com/snowmerak/jetti/v2/internal/executor/cli"
+	"log"
 	"os"
+	"path/filepath"
 )
 
 func main() {
@@ -15,6 +17,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	pwd = filepath.ToSlash(pwd)
 
 	switch ctx.Command() {
 	case cli.Generate:
@@ -44,5 +48,19 @@ func main() {
 				panic(err)
 			}
 		}
+	case cli.Index:
+		if err := executor.Index(pwd); err != nil {
+			panic(err)
+		}
+	case cli.Impl:
+		if err := executor.ImplInteractive(pwd); err != nil {
+			panic(err)
+		}
+	case cli.ImplTarget:
+		if err := executor.ImplTargets(pwd, param.Impl.Target); err != nil {
+			panic(err)
+		}
+	default:
+		log.Println("unknown command", ctx.Command())
 	}
 }
