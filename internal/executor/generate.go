@@ -89,7 +89,7 @@ func Generate(root string) error {
 
 				if len(beans) > 0 {
 					beanUpdated = true
-					if err := generate.Bean(path, beans); err != nil {
+					if err := generate.Bean(moduleName, path, beans); err != nil {
 						return err
 					}
 					log.Printf("generate bean: %s", relativePath)

@@ -73,30 +73,16 @@ var beanInterfaceValue = []model.Interface{
 					"return",
 				},
 			},
+			{
+				Name: "MakeChild",
+				Return: []model.Field{
+					{
+						Name: "child",
+						Type: "Container",
+					},
+				},
+			},
 		},
-	},
-}
-
-var beanCopyFunction = model.Function{
-	Name: "CopyBeanContainer",
-	Params: []model.Field{
-		{
-			Name: "dst",
-			Type: "Container",
-		},
-		{
-			Name: "src",
-			Type: "Container",
-		},
-	},
-	Code: []string{
-		"for _, key := range src.Keys() {",
-		"value, ok := src.Get(key)",
-		"if !ok {",
-		"continue",
-		"}",
-		"dst.Set(key, value)",
-		"}",
 	},
 }
 
@@ -122,6 +108,10 @@ func BeanContainer(root string) error {
 			{
 				Name: "Default",
 				Fields: []model.Field{
+					{
+						Name: "parent",
+						Type: "Container",
+					},
 					{
 						Name: "beans",
 						Type: "map[any]any",
@@ -154,6 +144,11 @@ func BeanContainer(root string) error {
 							"$RECEIVER$.lock.RLock()",
 							"value, ok = $RECEIVER$.beans[key]",
 							"$RECEIVER$.lock.RUnlock()",
+							"if !ok {",
+							"if $RECEIVER$.parent != nil {",
+							"value, ok = $RECEIVER$.parent.Get(key)",
+							"}",
+							"}",
 							"return",
 						},
 					},
@@ -207,6 +202,22 @@ func BeanContainer(root string) error {
 							"return",
 						},
 					},
+					{
+						Name: "MakeChild",
+						Return: []model.Field{
+							{
+								Name: "child",
+								Type: "Container",
+							},
+						},
+						Code: []string{
+							"child = &Default{",
+							"parent: $RECEIVER$,",
+							"beans: make(map[any]any),",
+							"}",
+							"return",
+						},
+					},
 				},
 			},
 		},
@@ -226,7 +237,6 @@ func BeanContainer(root string) error {
 					"return",
 				},
 			},
-			beanCopyFunction,
 		},
 	}
 
@@ -242,7 +252,7 @@ func BeanContainer(root string) error {
 	return nil
 }
 
-func Bean(path string, beans []check.Bean) error {
+func Bean(moduleName string, path string, beans []check.Bean) error {
 	dir := filepath.Dir(path)
 	packageName := filepath.Base(dir)
 
@@ -250,25 +260,16 @@ func Bean(path string, beans []check.Bean) error {
 		return nil
 	}
 
-	{
-		ifceFilePath := MakeGeneratedFileName(dir, "bean", "interface")
-		ifcePkg := &model.Package{
-			Name:       packageName,
-			Interfaces: beanInterfaceValue,
-			Functions:  []model.Function{beanCopyFunction},
-		}
-		ifceData, err := generator.GenerateFile(ifcePkg)
-		if err != nil {
-			return err
-		}
-		if err := os.WriteFile(ifceFilePath, ifceData, os.ModePerm); err != nil {
-			return err
-		}
-	}
+	beanPackagePath := filepath.Join(moduleName, "gen", "bean")
+	beanPackagePath = filepath.ToSlash(beanPackagePath)
 
 	for _, bean := range beans {
 		for _, alias := range bean.Aliases {
-			alias = strings.ToUpper(alias[:1]) + alias[1:]
+			origin := alias
+			alias = strings.ToUpper(alias[:1])
+			if len(origin) > 1 {
+				alias += origin[1:]
+			}
 			filePath := MakeGeneratedFileName(dir, strings.ToLower(alias), "bean")
 			typ := bean.Name
 			switch bean.Type {
@@ -282,6 +283,9 @@ func Bean(path string, beans []check.Bean) error {
 				Imports: []model.Import{
 					{
 						Path: "errors",
+					},
+					{
+						Path: beanPackagePath,
 					},
 				},
 				Aliases: []model.Alias{
@@ -303,7 +307,7 @@ func Bean(path string, beans []check.Bean) error {
 						Params: []model.Field{
 							{
 								Name: "beanContainer",
-								Type: "Container",
+								Type: "bean.Container",
 							},
 							{
 								Name: "value",
@@ -319,7 +323,7 @@ func Bean(path string, beans []check.Bean) error {
 						Params: []model.Field{
 							{
 								Name: "beanContainer",
-								Type: "Container",
+								Type: "bean.Container",
 							},
 						},
 						Return: []model.Field{
