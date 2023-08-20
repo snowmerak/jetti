@@ -99,7 +99,7 @@ func New(root string, moduleName string, kind int) error {
 	case NewKindProto:
 		path := filepath.Join(filepath.ToSlash(root), filepath.ToSlash(moduleName))
 		dir := filepath.Dir(path)
-		base := filepath.Base(path)
+		base := filepath.Base(dir)
 		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
 			return err
 		}
@@ -109,7 +109,7 @@ func New(root string, moduleName string, kind int) error {
 			return err
 		}
 
-		if _, err := f.WriteString(fmt.Sprintf(protoScaffold, base, moduleName)); err != nil {
+		if _, err := f.WriteString(fmt.Sprintf(protoScaffold, base, dir)); err != nil {
 			return err
 		}
 	}
