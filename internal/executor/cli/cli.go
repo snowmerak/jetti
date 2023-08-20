@@ -1,11 +1,14 @@
 package cli
 
 const (
-	Generate = "generate"
-	New      = "new <module-name>"
-	Run      = "run <command-name>"
-	RunArgs  = "run <command-name> <args>"
-	Show     = "show"
+	Generate   = "generate"
+	New        = "new <module-name>"
+	Run        = "run <command-name>"
+	RunArgs    = "run <command-name> <args>"
+	Show       = "show"
+	Index      = "index"
+	Impl       = "impl"
+	ImplTarget = "impl <target>"
 )
 
 type CLI struct {
@@ -23,4 +26,10 @@ type CLI struct {
 	Show struct {
 		Imports bool `cmd:"" help:"Show import cycle"`
 	} `cmd:"" help:"Show information"`
+	Index struct {
+	} `cmd:"" help:"Index the project"`
+	Impl struct {
+		Interactive bool     `cmd:"" help:"Interactive mode"`
+		Target      []string `arg:"" optional:"" help:"Implement interfaces"`
+	} `cmd:"" help:"Implement interfaces"`
 }
