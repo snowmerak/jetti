@@ -3,6 +3,7 @@ package generator
 import (
 	"bytes"
 	"go/format"
+	"golang.org/x/tools/imports"
 	"strings"
 
 	"github.com/snowmerak/jetti/v2/lib/model"
@@ -223,6 +224,11 @@ func GenerateFile(pkg *model.Package) ([]byte, error) {
 	}
 
 	fd, err := format.Source(rs.Bytes())
+	if err != nil {
+		return nil, err
+	}
+
+	fd, err = imports.Process("", fd, nil)
 	if err != nil {
 		return nil, err
 	}
