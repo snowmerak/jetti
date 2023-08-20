@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package store;
+
+option go_package = "model/store";
+
+message StringList {
+    repeated string values = 1;
+}
