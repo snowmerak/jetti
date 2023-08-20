@@ -2,7 +2,11 @@ package cache
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"github.com/dgraph-io/badger/v4"
+	"github.com/snowmerak/jetti/v2/gen/grpc/model/store"
+	"github.com/snowmerak/jetti/v2/lib/model"
+	"google.golang.org/protobuf/proto"
 	"time"
 )
 
@@ -49,6 +53,89 @@ func (c *Cache) Set(key string, value int64) error {
 		e := badger.NewEntry([]byte(key), buf).WithTTL(time.Hour * 24 * 30)
 		return txn.SetEntry(e)
 	})
+}
+
+func (c *Cache) GetBytes(key string) ([]byte, bool) {
+	var value []byte
+	err := c.db.View(func(txn *badger.Txn) error {
+		item, err := txn.Get([]byte(key))
+		if err != nil {
+			return err
+		}
+		return item.Value(func(val []byte) error {
+			value = val
+			return nil
+		})
+	})
+	if err != nil {
+		return nil, false
+	}
+	return value, true
+}
+
+func (c *Cache) SetBytes(key string, value []byte) error {
+	return c.db.Update(func(txn *badger.Txn) error {
+		e := badger.NewEntry([]byte(key), value)
+		return txn.SetEntry(e)
+	})
+}
+
+func (c *Cache) SetInterface(key string, value model.InterfaceTransferObject) error {
+	return c.db.Update(func(txn *badger.Txn) error {
+		data, err := json.Marshal(value)
+		if err != nil {
+			return err
+		}
+		e := badger.NewEntry([]byte(key), data)
+		return txn.SetEntry(e)
+	})
+}
+
+func (c *Cache) GetInterface(key string) (model.InterfaceTransferObject, bool) {
+	var value model.InterfaceTransferObject
+	err := c.db.View(func(txn *badger.Txn) error {
+		item, err := txn.Get([]byte(key))
+		if err != nil {
+			return err
+		}
+		return item.Value(func(val []byte) error {
+			return json.Unmarshal(val, &value)
+		})
+	})
+	if err != nil {
+		return model.InterfaceTransferObject{}, false
+	}
+	return value, true
+}
+
+func (c *Cache) SetInterfaceNames(key string, value []string) error {
+	return c.db.Update(func(txn *badger.Txn) error {
+		data, err := proto.Marshal(&store.StringList{
+			Values: value,
+		})
+		if err != nil {
+			return err
+		}
+		e := badger.NewEntry([]byte(key), data)
+		return txn.SetEntry(e)
+	})
+}
+
+func (c *Cache) GetInterfaceNames(key string) ([]string, bool) {
+	var value store.StringList
+	err := c.db.View(func(txn *badger.Txn) error {
+		item, err := txn.Get([]byte(key))
+		if err != nil {
+			return err
+		}
+		return item.Value(func(val []byte) error {
+			return proto.Unmarshal(val, &value)
+		})
+	})
+	if err != nil {
+		return nil, false
+	}
+	return value.Values, true
 }
 
 func (c *Cache) Delete(key string) error {
