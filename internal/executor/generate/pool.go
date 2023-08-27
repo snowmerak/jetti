@@ -98,6 +98,33 @@ func Pool(path string, pools []check.Pool) error {
 								},
 							},
 							{
+								Name: "GetWithContext",
+								Params: []model.Field{
+									{
+										Name: "ctx",
+										Type: "context.Context",
+									},
+								},
+								Return: []model.Field{
+									{
+										Type: typ,
+									},
+									{
+										Type: "error",
+									},
+								},
+								Code: []string{
+									"v := $RECEIVER$.pool.Get()",
+									"if v == nil {",
+									"\treturn nil, err" + alias + "CannotGet",
+									"}",
+									"context.AfterFunc(ctx, func() {",
+									"\t$RECEIVER$.pool.Put(v)",
+									"})",
+									"return v.(" + typ + "), nil",
+								},
+							},
+							{
 								Name: "Put",
 								Params: []model.Field{
 									{
@@ -209,6 +236,34 @@ func Pool(path string, pools []check.Pool) error {
 									"}",
 									"runtime.SetFinalizer(resp, func(v interface{}) {",
 									"\t$RECEIVER$.pool <- v.(" + typ + ")",
+									"})",
+									"return resp",
+								},
+							},
+							{
+								Name: "GetWithContext",
+								Params: []model.Field{
+									{
+										Name: "ctx",
+										Type: "context.Context",
+									},
+								},
+								Return: []model.Field{
+									{
+										Type: typ,
+									},
+								},
+								Code: []string{
+									"after := time.After($RECEIVER$.timeout)",
+									"resp := (" + typ + ")(nil)",
+									"select {",
+									"case v := <-$RECEIVER$.pool:",
+									"\tresp = v",
+									"case <-after:",
+									"\tresp = new(" + pool.TypeName + ")",
+									"}",
+									"context.AfterFunc(ctx, func() {",
+									"\t$RECEIVER$.Put(resp)",
 									"})",
 									"return resp",
 								},
