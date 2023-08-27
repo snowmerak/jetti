@@ -8,6 +8,12 @@ import (
 func ParseAlias(node ast.Node) *model.Alias {
 	switch x := node.(type) {
 	case *ast.TypeSpec:
+		switch y := x.Type.(type) {
+		case *ast.InterfaceType:
+			return nil
+		case *ast.StructType:
+			return nil
+		}
 		return &model.Alias{
 			Name: x.Name.Name,
 			Type: ParseName(x.Type),
