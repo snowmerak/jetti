@@ -19,7 +19,7 @@ func RequestScopeData(path string, beans []check.Bean) error {
 	for _, bean := range beans {
 		for _, alias := range bean.Aliases {
 			alias = strings.ToUpper(alias[:1]) + alias[1:]
-			filePath := filepath.Join(dir, strings.ToLower(alias)+".context.go")
+			filePath := filepath.Join(MakeGeneratedFileName(dir, strings.ToLower(alias), "context"))
 			typ := bean.Name
 			switch bean.Type {
 			case check.TypeStruct:
@@ -40,7 +40,7 @@ func RequestScopeData(path string, beans []check.Bean) error {
 				Aliases: []model.Alias{
 					{
 						Name: alias + "ContextKey",
-						Type: "string",
+						Type: "struct{}",
 					},
 				},
 				GlobalVariables: []model.GlobalVariable{
@@ -69,7 +69,7 @@ func RequestScopeData(path string, beans []check.Bean) error {
 							},
 						},
 						Code: []string{
-							fmt.Sprintf("return context.WithValue(ctx, %s(\"%s\"), v)", alias+"ContextKey", alias),
+							fmt.Sprintf("return context.WithValue(ctx, %s{}, v)", alias+"ContextKey"),
 						},
 					},
 					{
@@ -89,7 +89,7 @@ func RequestScopeData(path string, beans []check.Bean) error {
 							},
 						},
 						Code: []string{
-							fmt.Sprintf("v, ok := ctx.Value(%s(\"%s\")).(%s)", alias+"ContextKey", alias, typ),
+							fmt.Sprintf("v, ok := ctx.Value(%s{}).(%s)", alias+"ContextKey", typ),
 							"return v, ok",
 						},
 					},
