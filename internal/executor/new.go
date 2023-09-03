@@ -109,7 +109,7 @@ func New(root string, moduleName string, kind int) error {
 			return err
 		}
 
-		if _, err := f.WriteString(fmt.Sprintf(protoScaffold, base, dir)); err != nil {
+		if _, err := f.WriteString(fmt.Sprintf(protoScaffold, base, filepath.ToSlash(filepath.Dir(filepath.ToSlash(moduleName))))); err != nil {
 			return err
 		}
 	}
