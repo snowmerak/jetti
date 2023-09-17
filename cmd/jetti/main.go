@@ -60,6 +60,10 @@ func main() {
 		if err := executor.ImplTargets(pwd, param.Impl.Target); err != nil {
 			panic(err)
 		}
+	case cli.Check:
+		if err := executor.Check(pwd); err != nil {
+			panic(err)
+		}
 	default:
 		log.Println("unknown command", ctx.Command())
 	}

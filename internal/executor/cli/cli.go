@@ -9,6 +9,7 @@ const (
 	Index      = "index"
 	Impl       = "impl"
 	ImplTarget = "impl <target>"
+	Check      = "check"
 )
 
 type CLI struct {
@@ -32,4 +33,6 @@ type CLI struct {
 		Interactive bool     `cmd:"" help:"Interactive mode"`
 		Target      []string `arg:"" optional:"" help:"Implement interfaces"`
 	} `cmd:"" help:"Implement interfaces"`
+	Check struct {
+	} `cmd:"" help:"Check the project"`
 }
