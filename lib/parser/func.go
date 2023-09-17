@@ -3,6 +3,7 @@ package parser
 import (
 	"github.com/snowmerak/jetti/v2/lib/model"
 	"go/ast"
+	"go/token"
 )
 
 func ParseFunction(node ast.Node) *model.Function {
@@ -60,6 +61,7 @@ func ParseStmt(node ast.Node) string {
 			}
 			rs += ParseExpr(expr)
 		}
+		return rs
 	case *ast.ReturnStmt:
 		rs := "return "
 		for i, result := range x.Results {
@@ -124,13 +126,85 @@ func ParseStmt(node ast.Node) string {
 		return x.Label.Name + ": " + ParseStmt(x.Stmt)
 	case *ast.EmptyStmt:
 		return ""
+	case *ast.DeferStmt:
+		return "defer " + ParseExpr(x.Call)
+	case *ast.GoStmt:
+		return "go " + ParseExpr(x.Call)
 	}
 	return ""
 }
 
 // ParseDecl parses a declaration.
-// TODO: ParseDecl
 func ParseDecl(node ast.Decl) string {
+	switch x := node.(type) {
+	case *ast.GenDecl:
+		switch x.Tok {
+		case token.CONST:
+			rs := "const "
+			for i, spec := range x.Specs {
+				if i > 0 {
+					rs += ", "
+				}
+				rs += ParseSpec(spec)
+			}
+			return rs
+		case token.TYPE:
+			rs := "type "
+			for i, spec := range x.Specs {
+				if i > 0 {
+					rs += ", "
+				}
+				rs += ParseSpec(spec)
+			}
+			return rs
+		case token.VAR:
+			rs := "var "
+			for i, spec := range x.Specs {
+				if i > 0 {
+					rs += ", "
+				}
+				rs += ParseSpec(spec)
+			}
+			return rs
+		case token.IMPORT:
+			rs := "import "
+			for i, spec := range x.Specs {
+				if i > 0 {
+					rs += ", "
+				}
+				rs += ParseSpec(spec)
+			}
+		}
+	}
+	return ""
+}
+
+func ParseSpec(spec ast.Spec) string {
+	switch x := spec.(type) {
+	case *ast.ValueSpec:
+		rs := ""
+		for i, name := range x.Names {
+			if i > 0 {
+				rs += ", "
+			}
+			rs += name.Name
+		}
+		if x.Type != nil {
+			rs += " " + ParseExpr(x.Type)
+		}
+		if x.Values != nil {
+			rs += " = "
+			for i, value := range x.Values {
+				if i > 0 {
+					rs += ", "
+				}
+				rs += ParseExpr(value)
+			}
+		}
+		return rs
+	case *ast.TypeSpec:
+		return x.Name.Name + " " + ParseExpr(x.Type)
+	}
 	return ""
 }
 
