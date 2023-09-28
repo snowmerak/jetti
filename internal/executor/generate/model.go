@@ -110,6 +110,27 @@ func ConvertJson(path string) error {
 				},
 			},
 			{
+				Name: "UnmarshalFromJSON",
+				Receiver: model.Field{
+					Name: strings.ToLower(structName),
+					Type: structName,
+				},
+				Params: []model.Field{
+					{
+						Name: "data",
+						Type: "[]byte",
+					},
+				},
+				Return: []model.Field{
+					{
+						Type: "error",
+					},
+				},
+				Code: []string{
+					"return json.Unmarshal(data, $RECEIVER$)",
+				},
+			},
+			{
 				Name: "Encode2JSON",
 				Receiver: model.Field{
 					Name: strings.ToLower(structName),
@@ -128,6 +149,27 @@ func ConvertJson(path string) error {
 				},
 				Code: []string{
 					"return json.NewEncoder(w).Encode($RECEIVER$)",
+				},
+			},
+			{
+				Name: "DecodeFromJSON",
+				Receiver: model.Field{
+					Name: strings.ToLower(structName),
+					Type: structName,
+				},
+				Params: []model.Field{
+					{
+						Name: "r",
+						Type: "io.Reader",
+					},
+				},
+				Return: []model.Field{
+					{
+						Type: "error",
+					},
+				},
+				Code: []string{
+					"return json.NewDecoder(r).Decode($RECEIVER$)",
 				},
 			},
 		},
