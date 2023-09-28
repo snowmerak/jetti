@@ -95,6 +95,11 @@ func BeanContainer(root string) error {
 	if err != nil {
 		return err
 	}
+	defer func(f *os.File) {
+		if err := f.Close(); err != nil {
+			panic(err)
+		}
+	}(f)
 
 	pkg := &model.Package{
 		Name: "bean",
