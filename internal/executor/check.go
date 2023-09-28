@@ -38,6 +38,8 @@ func Check(root string) error {
 				return err
 			}
 
+			_ = pkg
+
 			return nil
 		}); err != nil {
 			return err
