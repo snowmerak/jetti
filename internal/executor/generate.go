@@ -31,6 +31,8 @@ func Generate(root string) error {
 	}
 
 	beanUpdated := false
+	jsonGenerated := false
+	yamlGenerated := false
 
 	for _, subDir := range subDirectories {
 		if err := filepath.Walk(filepath.Join(root, subDir), func(path string, info os.FileInfo, err error) error {
@@ -147,6 +149,7 @@ func Generate(root string) error {
 				if err := generate.ConvertJson(path); err != nil {
 					return err
 				}
+				jsonGenerated = true
 				log.Printf("generate json: %s", relativePath)
 			case ".yml":
 				fallthrough
@@ -154,6 +157,7 @@ func Generate(root string) error {
 				if err := generate.ConvertYaml(path); err != nil {
 					return err
 				}
+				yamlGenerated = true
 				log.Printf("generate yaml: %s", relativePath)
 			case ".proto":
 				if err := generate.BuildProtobuf(root, path); err != nil {
@@ -167,13 +171,6 @@ func Generate(root string) error {
 				log.Printf("generate flatbuffers: %s", relativePath)
 			default:
 				return nil
-			}
-
-			if beanUpdated {
-				if err := generate.BeanContainer(root); err != nil {
-					return err
-				}
-				beanUpdated = false
 			}
 
 			if len(errFaces) > 0 {
@@ -191,6 +188,27 @@ func Generate(root string) error {
 		}); err != nil {
 			return err
 		}
+	}
+
+	if beanUpdated {
+		if err := generate.BeanContainer(root); err != nil {
+			return err
+		}
+		beanUpdated = false
+	}
+
+	if jsonGenerated {
+		if err := generate.JsonSerializable(root); err != nil {
+			return err
+		}
+		jsonGenerated = false
+	}
+
+	if yamlGenerated {
+		if err := generate.YamlSerializable(root); err != nil {
+			return err
+		}
+		yamlGenerated = false
 	}
 
 	return nil
