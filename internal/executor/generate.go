@@ -4,6 +4,7 @@ import (
 	"github.com/snowmerak/jetti/v2/internal/cache"
 	"github.com/snowmerak/jetti/v2/internal/executor/check"
 	"github.com/snowmerak/jetti/v2/internal/executor/generate"
+	"github.com/snowmerak/jetti/v2/internal/executor/generate/fp"
 	"github.com/snowmerak/jetti/v2/lib/parser"
 	"log"
 	"os"
@@ -144,6 +145,17 @@ func Generate(root string) error {
 						return err
 					}
 					log.Printf("generate getter: %s", relativePath)
+				}
+
+				hasFp, err := check.HasFp(pkg)
+				if err != nil {
+					return err
+				}
+
+				if hasFp {
+					if err := fp.FunctionalProgramming(moduleName, root); err != nil {
+						return err
+					}
 				}
 			case ".json":
 				if err := generate.ConvertJson(path); err != nil {
