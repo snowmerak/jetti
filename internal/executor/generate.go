@@ -1,18 +1,19 @@
 package executor
 
 import (
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/snowmerak/jetti/v2/internal/cache"
 	"github.com/snowmerak/jetti/v2/internal/executor/check"
 	"github.com/snowmerak/jetti/v2/internal/executor/generate"
 	"github.com/snowmerak/jetti/v2/internal/executor/generate/fp"
 	"github.com/snowmerak/jetti/v2/lib/parser"
-	"log"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
-var subDirectories = []string{"lib", "internal", "model"}
+var subDirectories = []string{"lib", "internal", "model", "clib"}
 
 func Generate(root string) error {
 	moduleName, err := check.GetModuleName(root)
