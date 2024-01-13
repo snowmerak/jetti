@@ -69,6 +69,7 @@ func main() {
 			if err := executor.InstallRegistriesRenew(); err != nil {
 				panic(err)
 			}
+			log.Println("tools registries renewed")
 		}
 		if param.Tools.Install {
 			if err := executor.InstallRegistry(); err != nil {

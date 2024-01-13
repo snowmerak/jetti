@@ -18,11 +18,14 @@ func InstallRegistriesRenew() error {
 	return nil
 }
 
+const exit = "[exit]"
+
 func InstallRegistry() error {
 	registries, err := tools.GetRegistries()
 	if err != nil {
 		return err
 	}
+	registries = append([]string{exit}, registries...)
 
 loop:
 	for {
@@ -37,13 +40,17 @@ loop:
 			return err
 		}
 
+		if selected == exit {
+			break
+		}
+
 		reg, err := tools.GetRegistryInfo(selected)
 		if err != nil {
 			return err
 		}
 
 		installationConfirm := &survey.Confirm{
-			Message: fmt.Sprintf("Are you sure to install %s?\nrepository: %s\ndescription: %s", selected, reg.Repository, reg.Description),
+			Message: fmt.Sprintf("Are you sure to install %s?\nrepository: %s\ndescription: %s\n", selected, reg.Repository, reg.Description),
 			Default: false,
 		}
 
@@ -70,4 +77,6 @@ loop:
 			return err
 		}
 	}
+
+	return nil
 }
