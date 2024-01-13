@@ -2,14 +2,26 @@ package main
 
 import (
 	"fmt"
-	"github.com/snowmerak/jetti/v2/lib/parser"
+	"github.com/snowmerak/jetti/v2/lib/tools"
 )
 
 func main() {
-	pkg, err := parser.ParseFile("./lib/generator/gen.go")
+	if err := tools.CloneIfNotExists(); err != nil {
+		panic(err)
+	}
+
+	registries, err := tools.GetRegistries()
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("%+v\n", pkg)
+	for _, registry := range registries {
+		reg, err := tools.GetRegistryInfo(registry)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("%+v\n", reg)
+	}
+
 }
