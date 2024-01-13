@@ -10,6 +10,7 @@ const (
 	Impl       = "impl"
 	ImplTarget = "impl <target>"
 	Check      = "check"
+	Tools      = "tools"
 )
 
 type CLI struct {
@@ -35,4 +36,8 @@ type CLI struct {
 	} `cmd:"" help:"Implement interfaces"`
 	Check struct {
 	} `cmd:"" help:"Check the project"`
+	Tools struct {
+		Renew   bool `cmd:"" help:"Renew tools registry"`
+		Install bool `cmd:"" help:"Install tool"`
+	} `cmd:"" help:"Search and install tools"`
 }

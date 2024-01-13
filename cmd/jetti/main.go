@@ -64,6 +64,17 @@ func main() {
 		if err := executor.Check(pwd); err != nil {
 			panic(err)
 		}
+	case cli.Tools:
+		if param.Tools.Renew {
+			if err := executor.InstallRegistriesRenew(); err != nil {
+				panic(err)
+			}
+		}
+		if param.Tools.Install {
+			if err := executor.InstallRegistry(); err != nil {
+				panic(err)
+			}
+		}
 	default:
 		log.Println("unknown command", ctx.Command())
 	}

@@ -4,6 +4,7 @@ import (
 	"github.com/go-git/go-git/v5"
 	"gopkg.in/yaml.v3"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -32,6 +33,18 @@ func init() {
 	regDir = tempDir + "/registry"
 }
 
+func ResetTempDir() error {
+	if err := os.RemoveAll(tempDir); err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(tempDir, 0755); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func CloneIfNotExists() error {
 	exists := true
 	if _, err := git.PlainOpen(tempDir); err != nil {
@@ -52,6 +65,10 @@ func CloneIfNotExists() error {
 }
 
 func GetRegistries() ([]string, error) {
+	if err := CloneIfNotExists(); err != nil {
+		return nil, err
+	}
+
 	files, err := os.ReadDir(regDir)
 	if err != nil {
 		return nil, err
@@ -82,4 +99,16 @@ func GetRegistryInfo(registry string) (*Registry, error) {
 	}
 
 	return reg, nil
+}
+
+func InstallRegistry(repository string, version string) error {
+	cmd := exec.Command("go", "install", repository+"@"+version)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+
+	return nil
 }
