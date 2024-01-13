@@ -39,5 +39,6 @@ type CLI struct {
 	Tools struct {
 		Renew   bool `cmd:"" help:"Renew tools registry"`
 		Install bool `cmd:"" help:"Install tool"`
+		Multi   bool `cmd:"" help:"Install multiple tools"`
 	} `cmd:"" help:"Search and install tools"`
 }
