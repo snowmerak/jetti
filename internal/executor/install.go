@@ -36,6 +36,7 @@ loop:
 		}
 
 		selected := ""
+		fmt.Println()
 		if err := survey.AskOne(selectRegistry, &selected); err != nil {
 			return err
 		}
@@ -55,6 +56,7 @@ loop:
 		}
 
 		ok := false
+		fmt.Println()
 		if err := survey.AskOne(installationConfirm, &ok); err != nil {
 			return err
 		}
@@ -69,6 +71,7 @@ loop:
 		}
 
 		version := ""
+		fmt.Println()
 		if err := survey.AskOne(versionInput, &version); err != nil {
 			return err
 		}
