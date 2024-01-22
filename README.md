@@ -11,4 +11,3 @@
 ```bash
 go install github.com/snowmerak/jetti/v2/cmd/jetti@latest
 ```
-```
