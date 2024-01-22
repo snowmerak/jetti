@@ -5,3 +5,10 @@
 ## 상세 정보
 
 [ReadMe](https://snowmerak.pages.dev/posts/jetti/)
+
+## 설치
+
+```bash
+go install github.com/snowmerak/jetti/v2/cmd/jetti@latest
+```
+```
